@@ -4,7 +4,7 @@ export const articles = [
     topic: 'Business',
     title: 'Why secret exposure matters to the business',
     description:
-      'I start with the authority behind a credential and follow what that could mean for the business.',
+      'The business consequence depends on what a credential permits and how safely that access can be stopped.',
   },
   {
     slug: 'action-plan',
