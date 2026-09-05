@@ -26,7 +26,7 @@ for (const file of articles) {
     (html.match(/<h2\b/g) || []).length >= 4,
     `Article body incomplete: ${slug}`,
   );
-  assert(html.includes('In this article'), `Missing contents: ${slug}`);
+  assert(html.includes('Contents'), `Missing contents: ${slug}`);
   const title = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1];
   assert(
     title && html.includes(`<title>${title}`),

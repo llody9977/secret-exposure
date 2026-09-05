@@ -1,49 +1,53 @@
-## Good is a set of demonstrated capabilities
+## I would look for capabilities I can demonstrate
 
-A well-controlled organisation can explain where important credentials come from, which workloads use them, what authority they carry, and how that authority can be stopped. It also knows where that explanation is incomplete.
+When I ask what good looks like, I do not mean a dashboard with no findings. I mean being able to explain where important credentials come from, which workloads use them, what authority they carry, and how that authority can be stopped.
 
-A clean scan is useful evidence about a defined scan. It is not evidence that every credential is safe, that every exposure surface is covered, or that a response will succeed. Assess those capabilities separately.
+I also want to know where that explanation is incomplete. A clean scan is evidence about a defined scan. It cannot establish that every surface is covered or that recovery will succeed.
 
-## Ownership and inventory are dependable
+## I should be able to find the owner
 
-For each critical service, credential metadata resolves to an accountable owner and an operational escalation route. The inventory is updated when an integration is created, changed, or retired. It contains no raw credential values and has its own access controls.
+For a critical service, I would expect credential metadata to lead to an accountable owner and a reachable operational contact. The inventory needs to change when an integration is created, altered, or retired. It should not become another store of raw secrets.
 
-Test this by selecting a service from the business inventory, not only from the scanner's onboarded list. Trace its build, runtime, and vendor identities. Unmapped credentials and unknown owners should become findings with follow-up, not exclusions introduced to improve the result.
+To test this, I would select a service from the business inventory rather than only from the scanner's onboarded list. I would follow its build, runtime, and supplier identities. An unmapped credential should produce follow up work rather than a convenient exclusion from the assessment.
 
-## Access is bounded and separation is real
+## The access boundary should hold in practice
 
-A workload has only the authority needed for its purpose. Production and non-production identities are separated. Shared credentials are being removed or have a documented constraint and containment plan. Time limits reduce the duration of access where supported.
+I would expect a workload's authority to fit its purpose and production identities to be separate from development identities. Shared credentials should either be removed or have a specific constraint and containment plan.
 
-Evidence includes a deployed policy review and an authorised negative test: an identity intended for one service cannot access another. Verify the effective permissions, including inherited roles and trust relationships. Reading the intended policy is less persuasive if another policy grants broader access.
+The evidence I would find persuasive includes an authorised negative test (i.e. showing that an identity intended for one service cannot access another). I would examine effective permissions, including inherited roles and trust relationships. The intended policy is not enough if another policy grants broader access.
 
-## Prevention and detection have known boundaries
+## I should understand what the controls can miss
 
-New exposure is blocked where the chosen control supports it. Bypasses are visible and reviewed. Detection covers an agreed set of repositories and other surfaces, and failures to collect or scan are distinguishable from successful clean results.
+I would want new exposure blocked where the preventive control supports it, with bypasses visible and reviewed. Detection should cover an agreed set of surfaces, and a failure to collect or scan should be distinguishable from a clean result.
 
-Use synthetic fixtures representing the expected formats and file paths. Include negative examples to observe noise. A missing fixture should fail the evaluation, while an unsupported surface should appear as a coverage gap. Do not turn a small successful test into a claim that all unknown formats will be detected.
+I would use synthetic fixtures representing expected formats and paths, together with examples that should not trigger findings. A missed expected fixture tells me something needs attention. An unsupported surface tells me there is a coverage gap.
 
-## Response works under service conditions
+What I would avoid is turning a small successful evaluation into a claim that unknown formats will also be detected. The result needs to keep the boundary of the exercise attached to it.
 
-The operational team can invalidate exposed access, replace it safely, and confirm the old access no longer works. The procedure accounts for scheduled jobs, cached credentials, active sessions, and the possibility of continued issuance. Recovery has a named owner.
+## Recovery should work under service conditions
 
-An exercise should include a realistic obstacle: the primary contact is unavailable, the provider console is inaccessible, or a consumer does not reload the replacement. Use isolated resources and agreed safety limits. The result should identify an operational improvement, not merely demonstrate that participants can read a runbook.
+I would want the operational team to demonstrate that exposed access can be invalidated, replacement access works, and the old access fails. The procedure needs to account for scheduled jobs, caches, sessions, and continued issuance.
 
-## Governance produces decisions and follow-through
+An exercise becomes more useful when it includes a realistic obstacle (e.g. the primary contact is unavailable or a consumer does not reload its configuration). I would use isolated resources and agreed safety limits. The purpose is to find an operational weakness before a real response depends on it.
 
-Leaders see unresolved critical exposures, overdue exceptions, coverage gaps, and recurring causes. They can trace headline measures to evidence and understand the denominator. Decisions result in funded work or explicit acceptance by the right owner.
+## Reporting should produce action
 
-A useful test is to choose one repeated exposure route and follow it across several reporting periods. If the same cause persists without a decision, the reporting process may be functioning while governance is not producing the required change.
+I would want leaders to see unresolved critical exposures, overdue exceptions, coverage gaps, and recurring causes. They should be able to trace the headline measures to evidence and understand what has been left out.
 
-## Use a capability profile without averaging away gaps
+One check I would make is to follow a repeated exposure route across several reporting periods. If nothing changes and no accountable decision is made, the reporting may be functioning without producing the governance outcome I need.
 
-For each dimension—ownership, access design, prevention, detection, response, and governance—record one of four evidence states: **unknown**, **defined**, **operating**, or **demonstrated**. Unknown means evidence is missing. Defined means the procedure and owner exist. Operating means recent records show it is used. Demonstrated means a relevant exercise or independent check supports the claimed outcome.
+## A capability profile helps me keep the gaps separate
 
-This is a proposed assessment aid for this series, not an industry maturity standard. Record the scope and date beside each judgement. Do not average the dimensions into a single score: excellent inventory does not compensate for an inability to revoke production access.
+For my own recap, I would record ownership, access design, prevention, detection, response, and governance separately. I would describe each as unknown, defined, operating, or demonstrated.
 
-An illustrative service might have demonstrated ownership and operating detection but only a defined recovery procedure. Its next action is to test recovery and address the failures, not to buy another scanner to raise an aggregate score.
+Unknown means evidence is missing. Defined means an owner and procedure exist. Operating means recent records show the procedure is used. Demonstrated means a relevant exercise or independent check supports the claimed outcome.
 
-## Accept evidence with an expiry
+This is a proposed assessment aid, not an industry maturity standard. I would record its scope and date and avoid averaging the dimensions. Strong inventory cannot compensate for an inability to revoke production access.
 
-A successful exercise proves something about the configuration and dependencies tested at that time. Reassess after material changes to identity, infrastructure, suppliers, or the application. Set periodic reviews based on criticality and change frequency.
+An imagined service with demonstrated ownership but only a written recovery procedure gives me a clear next action. I would exercise recovery rather than buy another scanner to improve an overall score.
 
-Good does not mean exposure becomes impossible. It means the organisation can show that avoidable routes are reduced, remaining authority is bounded, and response works—and can identify where those claims stop being supported.
+## I need to revisit evidence after change
+
+A successful exercise supports a conclusion about the configuration tested at that time. Changes to identity, infrastructure, suppliers, or the application can weaken that conclusion.
+
+I would reassess after material changes and set periodic reviews that reflect criticality and change frequency. What I want to retain is a clear account of the capabilities demonstrated, the conditions they depend on, and the gaps I still need to address.

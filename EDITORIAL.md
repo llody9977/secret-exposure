@@ -1,17 +1,23 @@
-# Editorial principles
+# Writing as personal reflection
 
-Write for decisions. Begin with the business or operational consequence, explain the mechanism, and give a practical action with an owner and evidence of success.
+Write as though I am thinking aloud and recording my understanding for my future self. These notes should help me remember what matters, why I reached a conclusion, and what I would look for when I return to the subject.
 
-Use plain, precise English and connected paragraphs. Be concise without stripping away the explanation that makes advice usable. Avoid hype, filler, fabricated personal experience, fear-based loss estimates, and generic compliance claims. Bring a practical BISO, security architecture, and fintech perspective without cultural stereotypes.
+Use a reflective first person voice and connected full sentences. Start with the thought or question that matters to me. Let the reasoning develop naturally. Avoid turning every paragraph into instructions for an audience or making every section follow a rigid framework.
 
-The central distinction is that scanning is a sensor. Risk reduction also requires prevention, bounded authority, revocation, investigation, recovery, and governance. Never imply that a clean repository scan proves the whole environment is free of secrets.
+Avoid dashes and colons as prose devices. Use full sentences instead. Parenthetical clarification is welcome where it reads naturally (i.e. explaining what I mean) or (e.g. making an idea concrete). Preserve required syntax in URLs, code, exact technical names, and quoted source titles.
 
-Keep interpretation-changing caveats beside the claim. Keep framework comparisons, source context, and methodology in the references page unless they change the reader's decision.
+Do not announce what the article explains. Avoid phrases such as "in this article", "this series covers", and "the next article will". Navigation belongs in the interface. The writing should move directly into the thought itself.
 
-Use primary sources for technical claims. Label hypothetical examples, proposed models, and illustrative timelines. Incident evidence must support the causal mechanism being discussed. Do not equate the number of users or repositories potentially exposed with confirmed compromise. Do not invent detection rates, losses, or remediation targets.
+First person reasoning must not become invented autobiography. It is appropriate to write "I would start with the service" or "The distinction that matters to me is whether access remains usable". Do not claim I handled an incident, spoke to a customer, or observed something at work unless I supplied that experience. Identify imagined situations naturally (e.g. "Suppose a deployment job exposes its key").
 
-Distinguish exposure from misuse; known timestamps from estimates; failed scans from clean scans; and alert closure from verified invalidation. State scope, denominator, and evidence limits for quantitative measures.
+Keep the writing practical, precise, and clear. Avoid hype, filler, fear based loss estimates, cultural stereotypes, and generic compliance claims. Explain enough of the mechanism to preserve the reasoning when I revisit the note.
 
-Keep references current when changing an affected claim. Update the displayed article date when publishing a substantive revision. Capability profiles and roadmaps are editorial aids, not external certifications.
+Scanning is a sensor. Risk reduction also requires prevention, bounded authority, revocation, investigation, recovery, and governance. A clean repository scan cannot establish that every credential or exposure surface is safe.
 
-Use headings to help readers navigate actual questions. Do not repeat the same checklist mechanically in every article. Keep site navigation concise: Overview, References, Next. Avoid article numbering, audience labels, and draft badges in public chrome.
+Keep caveats beside the claims they change. Put detailed framework comparisons and research methodology on the reference page unless they are necessary to understand the conclusion.
+
+Use primary sources for technical claims. Separate documented incidents from imagined examples and proposed approaches. Do not equate potential exposure with confirmed misuse or turn a limited test into a universal detection rate. Keep dates, denominators, scope, and uncertainty explicit where they matter.
+
+Preserve the distinction between finding a secret and stopping its use. Also preserve the distinction between exposure and misuse, failed scans and clean scans, and the absence of evidence and evidence of absence.
+
+Use concise headings that help me find a thought later. Keep interface labels simple, including Overview, Contents, and Next. Avoid article numbering, audience labels, and draft badges in public navigation.

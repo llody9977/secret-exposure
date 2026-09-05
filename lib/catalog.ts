@@ -2,57 +2,57 @@ export const articles = [
   {
     slug: 'business-risk',
     topic: 'Business',
-    title: 'Why secret exposure is a business problem',
+    title: 'Why secret exposure matters to the business',
     description:
-      'Connect a leaked credential to operational disruption, customer harm, and decisions leaders can make.',
+      'I start with the authority behind a credential and follow what that could mean for the business.',
   },
   {
     slug: 'action-plan',
     topic: 'Action',
-    title: 'What to do, who owns it, and where to start',
+    title: 'Where I would start and who needs to own it',
     description:
-      'A practical 5W1H plan that turns concern into accountable work.',
+      'I use 5W1H to work through one service before trying to solve the whole estate.',
   },
   {
     slug: 'security-architecture',
     topic: 'Architecture',
-    title: 'Design for the moment a credential escapes',
+    title: 'How I think about designing for exposure',
     description:
-      'Understand trust boundaries, runtime access, and the failure modes a vault cannot solve.',
+      'I want the design to explain what happens after a credential leaves its intended boundary.',
   },
   {
     slug: 'implementation',
     topic: 'Implementation',
-    title: 'Make good practices work in real systems',
+    title: 'Why good practices become difficult to implement',
     description:
-      'Handle legacy applications, noisy scans, fragile rotation, and delivery pressure.',
+      'I look at the dependencies that make straightforward advice difficult to put into practice.',
   },
   {
     slug: 'incident-response',
     topic: 'Response',
-    title: 'An exposed secret needs an access decision',
+    title: 'What I would focus on when a secret is exposed',
     description:
-      'Contain access, recover safely, and investigate beyond the original alert.',
+      'My first concern is whether the access still works and what it would take to stop it.',
   },
   {
     slug: 'governance',
     topic: 'Governance',
-    title: 'Give GRC visibility into risk, not just activity',
+    title: 'What I would want GRC to see',
     description:
-      'Govern ownership, exceptions, coverage, and evidence that controls actually work.',
+      'I want reporting that makes ownership, uncertainty, and the next decision clear.',
   },
   {
     slug: 'what-good-looks-like',
     topic: 'Assurance',
-    title: 'What good looks like—and how to prove it',
+    title: 'How I would recognise good control',
     description:
-      'Assess capabilities separately and test the outcomes that matter.',
+      'I look for capabilities that can be demonstrated and keep the gaps visible.',
   },
   {
     slug: 'path-forward',
     topic: 'Direction',
-    title: 'Move towards fewer persistent secrets',
+    title: 'The direction I would take from here',
     description:
-      'A phased roadmap to bounded access, workload identity, and durable improvement.',
+      'I want less persistent authority to manage and a practical way to decide what to change next.',
   },
 ] as const;

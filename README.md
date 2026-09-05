@@ -1,19 +1,19 @@
 # Secret Exposure
 
-A practical article publication for business leaders, security architects, engineering teams, and GRC. White background, blue and teal accents, and a fluid responsive layout.
+A personal journal of reasoning about secret exposure, kept for reference and recap. White background, blue and teal accents, and a fluid responsive layout.
 
 **Read:** https://llody9977.github.io/secret_exposure/
 
 ## Articles
 
-- [Why secret exposure is a business problem](content/articles/business-risk.md)
-- [What to do, who owns it, and where to start](content/articles/action-plan.md)
-- [Design for the moment a credential escapes](content/articles/security-architecture.md)
-- [Make good practices work in real systems](content/articles/implementation.md)
-- [An exposed secret needs an access decision](content/articles/incident-response.md)
-- [Give GRC visibility into risk, not just activity](content/articles/governance.md)
-- [What good looks like—and how to prove it](content/articles/what-good-looks-like.md)
-- [Move towards fewer persistent secrets](content/articles/path-forward.md)
+- [Why secret exposure matters to the business](content/articles/business-risk.md)
+- [Where I would start and who needs to own it](content/articles/action-plan.md)
+- [How I think about designing for exposure](content/articles/security-architecture.md)
+- [Why good practices become difficult to implement](content/articles/implementation.md)
+- [What I would focus on when a secret is exposed](content/articles/incident-response.md)
+- [What I would want GRC to see](content/articles/governance.md)
+- [How I would recognise good control](content/articles/what-good-looks-like.md)
+- [The direction I would take from here](content/articles/path-forward.md)
 
 ## Write and publish
 

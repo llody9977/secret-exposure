@@ -51,7 +51,7 @@ export default async function Article({
       <div className="article-layout">
         <aside className="contents">
           <details open>
-            <summary>In this article</summary>
+            <summary>Contents</summary>
             <nav aria-label="Article contents">
               <ol>
                 {a.headings.map((h) => (
@@ -73,7 +73,7 @@ export default async function Article({
             href={next ? path(`/articles/${next.slug}/`) : path('/')}
           >
             <span>{next ? 'Next' : 'Overview'}</span>
-            <strong>{next ? next.title : 'Explore the articles'} →</strong>
+            <strong>{next ? next.title : 'Return to my notes'} →</strong>
           </a>
         </div>
       </div>
