@@ -49,3 +49,9 @@ Selecting an important service and tracing one credential through issuance, use,
 For regulated organizations, the obligations mapping needs to remain specific to the entity, license, service, and contracts. A generic credential control cannot establish that a particular legal requirement has been satisfied.
 
 The result should be an account of which controls work, where assurance stops, and which unresolved risks require a decision. That gives GRC a basis for governing exposure beyond the volume of activity recorded by a tool.
+
+## The visibility depends on maintained relationships
+
+A record can contain every required field and still be operationally wrong. Ownership changes, new consumers, and bypassed provisioning can break the connection between a credential and its service. Reconciliation should expose those differences and retain the date and evidence of the last confirmed relationship.
+
+GRC can then distinguish a missing owner from an owner who has not acted, and an unsupported rotation mechanism from an approved procedure that failed. Those conditions need different decisions. A report that combines them into an unresolved finding count conceals the dependency that management needs to address.

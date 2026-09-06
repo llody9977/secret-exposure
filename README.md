@@ -15,6 +15,18 @@ A connected exploration of secret exposure, business risk, architecture, operati
 - [Recognizing good control through evidence](content/articles/what-good-looks-like.md)
 - [Moving towards fewer persistent credentials](content/articles/path-forward.md)
 
+## Technical practice
+
+- [How exposed credentials become usable access](content/articles/attacker-access-paths.md)
+- [What secret scanners detect and where coverage stops](content/articles/scanner-capabilities.md)
+- [Choosing a scanner against actual requirements](content/articles/choosing-a-scanner.md)
+- [Connecting detection to a working response](content/articles/pipeline-lifecycle.md)
+- [Replacing persistent credentials with workload identity](content/articles/workload-identity-lab.md)
+
+## POC development specification
+
+The lab is specified but not implemented. Give Gemini the [development handoff](poc/GEMINI_HANDOFF.md) together with the [requirements](poc/REQUIREMENTS.md) and [acceptance scenarios](poc/ACCEPTANCE.md). These define a Docker core with real Vault, PostgreSQL, SPIRE, and three application patterns, plus optional GitLab, iTop, and ServiceNow adapters. No lab command or acceptance result is claimed as working in this publication.
+
 ## Write and publish
 
 1. Edit an article in `content/articles/`. These Markdown files are the single source for the published article bodies.

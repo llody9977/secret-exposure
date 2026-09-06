@@ -49,3 +49,9 @@ An authorized exercise can follow one isolated test credential from exposure thr
 The result should show whether the finding reached the right person, the replacement worked, the previous access failed, and the evidence reached the record. An outdated runbook, inaccessible provider console, or consumer that cached the old value becomes specific work to resolve.
 
 This gives the initial service a clear purpose beyond being a pilot. It establishes a process that has been tried, reveals the dependencies that still need attention, and provides a sounder basis for bringing the next service into scope.
+
+## Intake establishes the response before issuance
+
+The service record should exist before a credential is generated. An intake captures ownership, classification, intended authority, consumers, and the supported replacement procedure. Approval then authorizes a provisioning process that writes the value into the secret manager and establishes the application retrieval path. Routine users do not need to receive or copy the value.
+
+That sequence gives later detection something dependable to resolve. A finding can be connected to an issuer, a credential version, a service, and a recovery decision. Existing credentials need reconciliation into the same records. An intake form cannot establish coverage for access that bypassed it.

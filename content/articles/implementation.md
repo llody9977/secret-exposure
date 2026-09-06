@@ -45,3 +45,9 @@ Repeated bypasses deserve examination as a pattern. They may reveal a broken sup
 New services can adopt the chosen access pattern through their deployment templates. Existing services need sequencing that reflects authority, exposure opportunities, and recovery difficulty. A large alert count may represent repetition rather than the most consequential dependency.
 
 A pilot is ready to expand when developers can use the control, responders can act on its findings, and the service can recover. Remaining constraints should stay visible alongside progress. They identify the engineering work still needed to make the practice dependable.
+
+## Delivery support determines whether rotation works
+
+Applications with secret integration can retrieve replacement access and rebuild their connection pools. A legacy application may instead need an agent to render a protected file and a supervisor to restart the process. Rendering the file proves delivery, while a successful target transaction proves that the consumer adopted it. Those are separate checks.
+
+An application whose credential cannot be changed needs a different decision. An owned exception should identify the remaining authority, available restrictions, and a retirement or replacement condition. Calling the application legacy does not create a rotation mechanism, and placing its unchanged password in a vault does not resolve that limitation.

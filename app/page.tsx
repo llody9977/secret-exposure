@@ -1,4 +1,4 @@
-import { articles } from '@/lib/catalog';
+import { foundationArticles, technicalArticles } from '@/lib/catalog';
 import { path } from '@/lib/site';
 export default function Home() {
   return (
@@ -19,27 +19,40 @@ export default function Home() {
           authority and the service behind it.
         </p>
       </section>
-      <section className="series" aria-labelledby="series-title">
-        <div className="section-heading">
-          <h2 id="series-title">Articles</h2>
-        </div>
-        <div className="article-grid">
-          {articles.map((a) => (
-            <a
-              className="article-card"
-              key={a.slug}
-              href={path(`/articles/${a.slug}/`)}
-            >
-              <span className="eyebrow">{a.topic}</span>
-              <h3>{a.title}</h3>
-              <p>{a.description}</p>
-              <span className="read-link">
-                Read article <span aria-hidden="true">↗</span>
-              </span>
-            </a>
-          ))}
-        </div>
-      </section>
+      {[
+        {
+          id: 'foundations',
+          title: 'Foundations',
+          articles: foundationArticles,
+        },
+        {
+          id: 'technical-practice',
+          title: 'Technical practice',
+          articles: technicalArticles,
+        },
+      ].map((series) => (
+        <section key={series.id} className="series" aria-labelledby={series.id}>
+          <div className="section-heading">
+            <h2 id={series.id}>{series.title}</h2>
+          </div>
+          <div className="article-grid">
+            {series.articles.map((a) => (
+              <a
+                className="article-card"
+                key={a.slug}
+                href={path(`/articles/${a.slug}/`)}
+              >
+                <span className="eyebrow">{a.topic}</span>
+                <h3>{a.title}</h3>
+                <p>{a.description}</p>
+                <span className="read-link">
+                  Read article <span aria-hidden="true">↗</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
       <section className="thesis">
         <h2>
           Scanning is a sensor.
@@ -50,6 +63,19 @@ export default function Home() {
           Finding a credential is the beginning. Its authority needs to be
           understood, exposed access needs to be stopped, and the cause needs to
           be addressed so the same exposure does not keep happening.
+        </p>
+      </section>
+      <section className="thesis">
+        <h2>A laboratory for the complete lifecycle</h2>
+        <p>
+          The development specification connects Vault, service records,
+          incident handling, and three application patterns. It defines the
+          intended Docker lab and its acceptance tests. The runtime has not been
+          implemented.{' '}
+          <a href="https://github.com/llody9977/secret_exposure/blob/main/poc/GEMINI_HANDOFF.md">
+            Read the development handoff
+          </a>
+          .
         </p>
       </section>
     </main>

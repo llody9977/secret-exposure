@@ -41,3 +41,9 @@ Rotation creates a similar dependency on consumer behavior. Some applications re
 Temporary credentials also leave a distinction between stopping existing access and preventing new issuance. A compromised workload may keep obtaining fresh credentials until its trust or execution is disabled. Provider behavior determines what happens to sessions already issued.
 
 A convincing review therefore needs more than a diagram. It needs evidence that intended access works, unintended access is rejected, and a compromised identity can be contained without leaving an unexplained path back in.
+
+## Authoritative records connect the control systems
+
+The service catalog or CMDB owns the service context and its accountable owner. The secret manager owns credential material and issuance. An incident system owns response decisions. Stable identifiers connect these records without copying secret values into a ticket or inventory. ServiceNow can occupy the service and incident roles, but the architecture depends on maintained relationships and usable interfaces rather than a particular product.
+
+The design also needs a credential version relationship and a record of consumer behavior. A detected value may belong to an earlier version, while a consumer may still hold an old connection. Resolving both prevents an automated response from rotating unrelated current access or declaring containment before the target rejects the exposed authority. Validation must use approved targets and treat unavailable evidence as inconclusive.

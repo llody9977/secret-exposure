@@ -55,3 +55,9 @@ This is a proposed assessment aid, not an industry maturity standard. Scope and 
 An illustrative service with demonstrated ownership but only a written recovery procedure has a specific next step. Recovery needs to be exercised and any failures addressed. Improving an unrelated capability would not resolve that gap.
 
 Evidence also has a period of relevance. Changes to identity, infrastructure, suppliers, or the application can weaken an earlier conclusion. Reassessment after material change, supported by periodic reviews appropriate to criticality, keeps the profile connected to the service as it operates now.
+
+## One trace should connect intake to effective containment
+
+A useful demonstration begins with approved intake and follows the same service identity through provisioning, consumer access, detection, owner assignment, and recovery. The evidence should show which version was exposed, why the action was permitted, and what the target accepted after execution.
+
+For a database credential, rejection of a fresh login and termination of an existing session are separate observations. For a workload identity, stopping new issuance and denying an already issued identity are also separate observations. Good control makes those distinctions visible and leaves the case open when the required outcome remains unverified.

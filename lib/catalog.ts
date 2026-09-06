@@ -1,4 +1,4 @@
-export const articles = [
+export const foundationArticles = [
   {
     slug: 'business-risk',
     topic: 'Business',
@@ -63,3 +63,48 @@ export const articles = [
       'A phased approach connects immediate containment to supported identity patterns and the retirement of old access.',
   },
 ] as const;
+
+export const technicalArticles = [
+  {
+    slug: 'attacker-access-paths',
+    updated: '6 September 2026',
+    topic: 'Threats',
+    title: 'How exposed credentials become usable access',
+    description:
+      'Exposure paths, attacker use, and target authority explain what detection must connect to.',
+  },
+  {
+    slug: 'scanner-capabilities',
+    updated: '6 September 2026',
+    topic: 'Detection',
+    title: 'What secret scanners detect and where coverage stops',
+    description:
+      'Detection methods, validation, and enforcement placement need separate evidence.',
+  },
+  {
+    slug: 'choosing-a-scanner',
+    updated: '6 September 2026',
+    topic: 'Tool selection',
+    title: 'Choosing a scanner against actual requirements',
+    description:
+      'Coverage, operating responsibility, and integration needs provide a practical basis for selection.',
+  },
+  {
+    slug: 'pipeline-lifecycle',
+    updated: '6 September 2026',
+    topic: 'Integration',
+    title: 'Connecting detection to a working response',
+    description:
+      'Intake records and approved workflows connect a finding to containment and application recovery.',
+  },
+  {
+    slug: 'workload-identity-lab',
+    updated: '6 September 2026',
+    topic: 'Identity',
+    title: 'Replacing persistent credentials with workload identity',
+    description:
+      'Legacy applications, dynamic credentials, and attested identities need different recovery paths.',
+  },
+] as const;
+
+export const articles = [...foundationArticles, ...technicalArticles] as const;
