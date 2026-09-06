@@ -1,47 +1,51 @@
-## I would begin with one service
+## One service gives the work a useful boundary
 
-My instinct is to make the problem small enough to understand properly. Trying to catalogue every credential before doing anything useful could become a programme of inventory work with no demonstrated improvement in response.
+Reducing secret exposure can become a large inventory exercise before anything changes in the way access is handled. Repositories are scanned, findings accumulate, and ownership remains unclear. The organization knows more about where credentials appear, but may still struggle to stop one safely.
 
-I would start with an important business service and follow the credentials that build, deploy, operate, and support it. That gives me a boundary I can explain and a practical way to find out whether the process works before expanding it.
+An important business service gives the work a more concrete starting point. Its credentials can be followed through the processes that build, deploy, operate, and support it. The scope is small enough to investigate properly while still connecting the effort to something the business depends on.
 
-I still find 5W1H useful for organising my thoughts. The value is in answering the questions clearly, rather than making the work fit a template.
+The reason for choosing that service should be clear. It might handle sensitive customer data, support an important transaction, or rely on access that would be difficult to replace. That reason helps determine which dependencies deserve attention first. Known urgent exposures elsewhere still need a response while this work proceeds.
 
-## Why I would do the work
+## The outcome needs to extend beyond discovery
 
-The outcome I want is less opportunity for an exposed credential to cause harm, together with a dependable way to stop its use. Installing a scanner is one activity that may support that outcome. It does not establish that the outcome has been achieved.
+Suppose a supplier integration token is copied into a support ticket. Finding the value answers only part of the problem. Someone still needs to establish who can read the ticket, what the token permits, which processes depend on it, and how to stop its use.
 
-A situation I would use to test the reasoning is a vendor integration token copied into a support ticket. I would want to understand who can read the ticket, what the token permits, how it can be replaced, and where misuse would appear. I would not assume a repository scanner sees the support system.
+A useful outcome would be that this exposure reaches an accountable owner and leads to verified containment. Another would be changing the support process so troubleshooting no longer requires copying the token. Both reduce risk in ways that installing a scanner alone cannot demonstrate.
 
-## What I need to understand
+This connects with OWASP's treatment of secret management as a lifecycle that includes creation, storage, rotation, revocation, and audit. Discovery is one point in that lifecycle. The work also has to address what happens before a credential escapes and after it is found. [OWASP guidance](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html).
 
-For that service, I would record the credential's identifier, issuer, purpose, environment, owner, permitted actions, consumers, expiry, and revocation method. The register should contain metadata rather than the secret values themselves. I also need to know where evidence of use is available and who can retrieve it.
+## The scope follows the credential through its use
 
-I would follow the places the value may travel (e.g. source history, automation variables, runner environments, logs, build artefacts, support tools, and local configuration). Each surface needs an honest status. It is covered, deliberately excluded with a reason, or not yet understood.
+For the selected service, the register needs enough information to support a decision. That includes the credential's identifier, issuer, purpose, owner, permissions, consumers, expiry, and revocation method. It should also identify where evidence of use is available. The secret value itself does not belong in the register.
 
-This connects with OWASP's treatment of secret management as a lifecycle that includes creation, storage, rotation, revocation, and audit. I find that broader view useful because it keeps discovery from becoming the whole programme. [OWASP guidance](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html).
+The consumer relationship is particularly important. Knowing which vault stores a key does not establish which applications retrieve it or whether they can accept a replacement without interruption. Configuration, access records, and the people maintaining the service may each reveal a different part of that dependency.
 
-## Who needs to own the decisions
+The same reasoning applies to detection coverage. A credential may pass through source history, automation variables, runtime configuration, logs, build artifacts, and support tools. Protecting its storage location does not establish that these later copies are protected.
 
-I would keep accountability with the service owner. Engineering understands the consumers and replacement procedure. Platform teams maintain the supported access patterns. Security operations coordinates triage and investigation, while an incident commander directs urgent containment when an incident is declared.
+Each relevant surface needs a clear status. It is covered by a defined check, excluded for an explicit reason, or not yet understood. A supplier console that cannot be inspected remains a gap to resolve through the supplier. It should not disappear from the assessment simply because the available scanner cannot reach it.
 
-GRC can challenge risk decisions and inspect the evidence. I would not make it the default owner of a technical fix simply because it maintains the risk register.
+## Ownership has to include the authority to act
 
-In a smaller organisation, one person may carry several responsibilities. I still want those responsibilities recorded, with a fallback contact and independent review for consequential exceptions. An ownership field is only useful if someone can actually be reached when access needs to be stopped.
+A finding assigned to a team is not necessarily a finding that team can resolve. Engineering may know how to update a consumer but lack permission to revoke the credential. Security operations may coordinate the response without being able to authorize a service interruption.
 
-## Where I would look
+For this operating approach, the service owner remains accountable for the risk and the work needed to address it. Engineering maintains the consumers and replacement procedure. Platform teams provide supported access patterns. Security operations handles triage and investigation, with an incident commander directing containment when an incident is declared.
 
-I would start at the issuing system and follow the credential to its consumers. Looking only in repositories misses credentials held in vendor consoles, local scripts, or runtime configuration.
+GRC can challenge exceptions and assess the evidence without becoming the owner of every technical repair. Where one person holds several responsibilities, those responsibilities still need to be explicit. A fallback contact matters because exposure will not necessarily be discovered when the usual owner is available.
 
-A value may be stored correctly and later printed by an application. That is why I need to understand the route it travels, rather than stopping once I find an approved storage location. Any unavailable surface remains a coverage gap with an owner.
+The practical test is whether the people receiving the finding can reach someone with the knowledge and authority needed for the next decision.
 
-## When I would act
+## Timing depends on the access at risk
 
-Credible exposure of privileged production access deserves an urgent containment decision. I would not leave it in a routine backlog simply because misuse has not yet been demonstrated.
+Credible exposure of privileged production access calls for an urgent containment decision. The absence of confirmed misuse is not a reason to leave usable authority in a routine backlog.
 
-I would distinguish acknowledgement, containment, recovery, and investigation when setting targets. The times need to reflect the service and the team's ability to respond. I do not see one deadline that can make every credential type safe.
+Other findings may allow planned remediation, but that classification needs to account for the permissions, affected service, and evidence available. A value believed to be expired deserves a different response from an active key that can change production. That belief still needs support.
 
-## How I would know the process works
+Acknowledgment, containment, recovery, and investigation also need separate expectations. An alert acknowledged quickly may remain unresolved because nobody can safely replace the credential. Targets should expose that delay rather than hide it behind a single response time.
 
-I would run an exercise using an authorised, isolated test credential with harmless permissions, or a synthetic fixture where validity does not need testing. I want to see the alert reach its owner, the replacement work, the old access fail, and the evidence reach the record.
+## An exercise shows whether the plan is usable
 
-Whatever breaks becomes the next piece of work. It might be an outdated runbook, an unreachable provider, or a consumer that caches the old value. That gives me a concrete improvement to carry into the next service.
+An authorized exercise can follow one isolated test credential from exposure through replacement and verified invalidation. A synthetic fixture is sufficient where the purpose is only to check detection and routing. A harmless test credential is needed when the exercise also has to demonstrate that old access stops working.
+
+The result should show whether the finding reached the right person, the replacement worked, the previous access failed, and the evidence reached the record. An outdated runbook, inaccessible provider console, or consumer that cached the old value becomes specific work to resolve.
+
+This gives the initial service a clear purpose beyond being a pilot. It establishes a process that has been tried, reveals the dependencies that still need attention, and provides a sounder basis for bringing the next service into scope.

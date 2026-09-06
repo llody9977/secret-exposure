@@ -7,7 +7,7 @@ A personal journal of reasoning about secret exposure, kept for reference and re
 ## Articles
 
 - [Why secret exposure matters to the business](content/articles/business-risk.md)
-- [Where I would start and who needs to own it](content/articles/action-plan.md)
+- [Where to start and who needs to own it](content/articles/action-plan.md)
 - [How I think about designing for exposure](content/articles/security-architecture.md)
 - [Why good practices become difficult to implement](content/articles/implementation.md)
 - [What I would focus on when a secret is exposed](content/articles/incident-response.md)

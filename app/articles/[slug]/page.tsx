@@ -46,7 +46,10 @@ export default async function Article({
         <p className="eyebrow">{a.topic}</p>
         <h1>{a.title}</h1>
         <p className="dek">{a.description}</p>
-        <p className="meta">{a.minutes} min read · Updated 5 September 2026</p>
+        <p className="meta">
+          {a.minutes} min read · Updated{' '}
+          {'updated' in a ? a.updated : '5 September 2026'}
+        </p>
       </header>
       <div className="article-layout">
         <aside className="contents">

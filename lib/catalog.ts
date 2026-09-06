@@ -8,10 +8,11 @@ export const articles = [
   },
   {
     slug: 'action-plan',
+    updated: '6 September 2026',
     topic: 'Action',
-    title: 'Where I would start and who needs to own it',
+    title: 'Where to start and who needs to own it',
     description:
-      'I use 5W1H to work through one service before trying to solve the whole estate.',
+      'A defined service connects the purpose, scope, ownership, timing, and practical steps needed to reduce exposure.',
   },
   {
     slug: 'security-architecture',
