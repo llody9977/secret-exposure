@@ -9,19 +9,19 @@ export default function Home() {
         </p>
         <h1>Secret exposure.</h1>
         <p className="standfirst">
-          Thinking through the risk.
+          Understanding the risk.
           <br />
-          Keeping the reasoning.
+          Making the response work.
         </p>
         <p className="intro-copy">
-          My notes on secret exposure and the decisions it raises. I keep the
-          reasoning here so I can return to what matters and why.
+          An exposed credential can connect a small technical finding to a
+          significant business consequence. The response depends on its
+          authority and the service behind it.
         </p>
       </section>
       <section className="series" aria-labelledby="series-title">
         <div className="section-heading">
-          <h2 id="series-title">My notes</h2>
-          <p>The questions I want to come back to.</p>
+          <h2 id="series-title">Articles</h2>
         </div>
         <div className="article-grid">
           {articles.map((a) => (
@@ -34,7 +34,7 @@ export default function Home() {
               <h3>{a.title}</h3>
               <p>{a.description}</p>
               <span className="read-link">
-                Read note <span aria-hidden="true">↗</span>
+                Read article <span aria-hidden="true">↗</span>
               </span>
             </a>
           ))}
@@ -47,9 +47,9 @@ export default function Home() {
           Risk reduction takes more.
         </h2>
         <p>
-          Finding a credential is the beginning. I also want to understand its
-          authority, how to stop its use, and what needs to change so the same
-          exposure does not keep happening.
+          Finding a credential is the beginning. Its authority needs to be
+          understood, exposed access needs to be stopped, and the cause needs to
+          be addressed so the same exposure does not keep happening.
         </p>
       </section>
     </main>

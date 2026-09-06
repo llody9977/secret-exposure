@@ -1,39 +1,45 @@
-## My first concern is whether the access still works
+## The first decision concerns usable access
 
-When a secret is exposed, removing it from the visible location can feel like the obvious fix. I need to remember that deleting a value from a file does not invalidate a copy someone already holds. GitHub puts revocation or rotation ahead of repository history cleanup for this reason. [GitHub cleanup guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
+Deleting a secret from a file does not invalidate a copy someone already holds. GitHub puts revocation or rotation ahead of repository history cleanup for this reason. The visible exposure and the authority behind it need separate treatment. [GitHub cleanup guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
 
-The first decision I would want to make is about the authority that may have escaped. What can it reach? Is it still usable? How can its use be stopped? Credible exposure of privileged access deserves an urgent response while the remaining facts are established.
+The response starts by establishing what the credential can reach, whether that access remains usable, and how it can be stopped. Credible exposure of privileged access deserves an urgent decision while the remaining facts are investigated. A complete timeline is useful, but waiting for one can prolong the period of possible misuse.
 
-## I would record the facts without creating more exposure
+## Gathering evidence should not create more copies
 
-I would record the credential identifier, issuer, owner, affected service, observed location, and discovery time. Sensitive evidence belongs in restricted storage. Copying the raw value into ordinary tickets or chat can create additional exposure during the response itself.
+The incident record needs the credential identifier, issuer, owner, affected service, observed location, and discovery time. Sensitive evidence belongs in restricted storage. Copying the raw value into ordinary tickets or chat can widen exposure during the response itself.
 
-I also need to distinguish discovery from the earliest possible exposure. A scanner may find an old commit. A provider may later revise its incident timeline. I would rather preserve that uncertainty than create a precise timestamp that the evidence cannot support.
+Discovery time also needs to remain distinct from the earliest possible exposure. A scanner may find a commit months after it was created. A provider may later revise the period affected by an incident. Recording what is known and what remains uncertain preserves the basis for later decisions.
 
-To establish whether the credential is active, I would prefer issuer metadata and approved administrative methods. Trying an unknown credential against production just to see what happens can have side effects and may cross an authorisation boundary.
+Issuer metadata and approved administrative methods can help establish credential status. Trying an unknown value against production simply to see what it permits can have side effects or cross an authorization boundary. Validation needs its own scope and a method appropriate to the target system.
 
-## Containment involves an availability decision
+## Containment has to account for legitimate dependencies
 
-If there is active misuse or highly consequential authority at risk, I would consider immediate invalidation even if it interrupts the service. Where a brief transition is justified, replacement before revocation may reduce disruption. I would want the incident commander and accountable service owner to make that tradeoff explicit, including the period when exposed access remains usable.
+Active misuse or highly consequential exposed authority may justify immediate invalidation despite service disruption. Where a brief transition is justified, introducing replacement access first may reduce downtime. The incident commander and accountable service owner need to make that tradeoff explicit, including the period when the exposed credential remains usable.
 
-I would also look at the mechanism that can issue more access. Revoking a token does not solve the problem if a compromised runner or application can simply obtain another one. Containment may need to stop the workload or remove its trust relationship.
+Replacing one value may still leave the source of compromise intact. A compromised runner, application, or federation trust can sometimes obtain fresh access after the original credential is revoked. Containment may therefore require isolation of the workload or removal of its ability to obtain new credentials.
 
-The provider's semantics matter here. Disabling a key, removing a role, and revoking a refresh token can have different effects on sessions already issued. I would verify the outcome through an authorised test that cannot change business data.
+Provider behavior matters. Disabling a key, removing a role assignment, and revoking a refresh token can have different effects on access already issued. Verification needs to establish the effective result at the target through an authorized method that cannot change business data.
 
-## I would follow the access into connected systems
+## Investigation follows the authority into connected systems
 
-The place that reports exposure is not necessarily the place where misuse would occur. I would examine the systems the credential could reach and look for unexpected authentication, data access, configuration changes, new credentials, and persistence.
+The place that reports exposure is not necessarily where misuse would appear. A credential found in a repository may authorize access to a database, cloud account, or supplier service. Relevant evidence can include unexpected authentication, data access, permission changes, new credentials, and persistence in those systems.
 
-CircleCI's January 2023 incident response involved customer secret rotation and investigation of connected systems. Its later report recommended examining activity from the reported initial compromise through customer rotation. I find this a useful example of why the investigation boundary can extend beyond the reporting platform. It does not establish that every customer's connected service was compromised. [CircleCI incident report](https://circleci.com/blog/jan-4-2023-incident-report/).
+CircleCI's January 2023 incident response involved customer secret rotation and investigation of connected systems. Its later report recommended examining activity from the reported initial compromise through customer rotation. That illustrates why the investigation boundary can extend beyond the reporting platform. It does not establish that every customer's connected service was compromised. [CircleCI incident report](https://circleci.com/blog/jan-4-2023-incident-report/).
 
-Signing and encryption keys would make me pause for a separate assessment. Replacing a key does not undo actions already taken, retrieve copied plaintext, or automatically establish which signed artefacts remain trustworthy. I would not treat every kind of secret as an interchangeable API token.
+The timeline needs to reflect both access opportunities and evidence limits. No suspicious events in incomplete logs cannot establish that no misuse occurred. The closure record should retain that distinction even when immediate containment is complete.
 
-## Closure needs more than a dismissed alert
+Signing and encryption keys also require attention to the trust or data they protect. Replacement does not undo past actions, retrieve copied plaintext, or automatically determine which signed artifacts remain trustworthy. Their consequences cannot always be resolved through the same procedure as an ordinary API token.
 
-I would want evidence that replacement access works, important transactions and background jobs are healthy, and the original access is ineffective. I also need confidence that an unchanged trust relationship cannot give the attacker a fresh credential.
+## Recovery needs evidence from the service
 
-Cleanup still matters. However, repository history rewrites can disrupt collaborators and cannot guarantee removal from every clone. I would preserve necessary forensic evidence in restricted storage and keep cleanup from delaying containment. [GitHub cleanup guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
+Replacement access should come from a trusted environment and be verified against important transactions, scheduled jobs, and operational tasks. The old access needs to be ineffective, and the compromised execution path must not be able to obtain a replacement through unchanged trust.
 
-The record I want to return to should explain what was exposed, how containment was verified, what the investigation covered, where its evidence was limited, and how the service recovered.
+Exposed copies still need cleanup. Repository history rewrites can disrupt collaborators and cannot guarantee removal from every clone. Necessary forensic evidence should be preserved in restricted storage without allowing cleanup to delay containment. [GitHub cleanup guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
 
-I would then track the change that prevents recurrence. That might be removing a debug dump or separating a privileged job. Replacing credentials repeatedly while preserving the same exposure route is not the improvement I am looking for.
+A useful closure record connects the original exposure to verified containment, the investigation performed, its limitations, and service recovery. Dismissing an alert records a tool state. It does not establish those outcomes by itself.
+
+## The cause needs an owner after containment ends
+
+A debug dump, shared identity, or overly privileged job may remain after the credential has been replaced. Without a separate owner for that underlying change, the same route can produce another exposure later.
+
+Containment can be complete while recurrence prevention remains open. Tracking both makes that distinction visible and keeps the longer engineering work from disappearing when the immediate incident is closed.

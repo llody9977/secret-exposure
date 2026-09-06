@@ -1,21 +1,21 @@
 import type { Metadata } from 'next';
 import { path } from '@/lib/site';
 export const metadata: Metadata = {
-  title: 'References and how I keep these notes',
+  title: 'References and evidence',
   description:
-    'The sources and evidence boundaries I want to retain when I revisit my notes on secret exposure.',
+    'Primary sources and evidence boundaries for secret exposure guidance.',
   alternates: { canonical: path('/references/') },
 };
 const sources = [
   [
     'OWASP Secrets Management Cheat Sheet',
     'https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html',
-    'I use the lifecycle view to keep finding a secret connected to its creation, use, and retirement.',
+    'Secret management spans creation, use, and retirement as well as discovery.',
   ],
   [
     'GitHub secret scanning detection scope',
     'https://docs.github.com/en/code-security/reference/secret-security/secret-scanning-scope',
-    'I refer to the documented coverage when distinguishing push protection from background detection.',
+    'Documented coverage distinguishes push protection from background detection.',
   ],
   [
     'GitHub OpenID Connect',
@@ -25,80 +25,76 @@ const sources = [
   [
     'AWS security best practices in IAM',
     'https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html',
-    'I refer to this guidance for temporary workload credentials and permissions that fit the intended task.',
+    'Provider guidance covers temporary workload credentials and permissions appropriate to the task.',
   ],
   [
     'Kubernetes good practices for Secrets',
     'https://kubernetes.io/docs/concepts/security/secrets-good-practices/',
-    'This helps me separate storage, retrieval, and runtime protection. Base64 encoding does not provide confidentiality.',
+    'Storage, retrieval, and runtime protection have distinct boundaries. Base64 encoding does not provide confidentiality.',
   ],
   [
     'GitHub guidance on remediating a leaked secret',
     'https://docs.github.com/en/code-security/tutorials/remediate-leaked-secrets/remediating-a-leaked-secret',
-    'I use this when thinking through replacement and revocation where availability also matters.',
+    'Replacement and revocation need sequencing that accounts for both exposure and availability.',
   ],
   [
     'GitHub guidance on removing sensitive data',
     'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository',
-    'I want to retain the priority of revocation and the limitations of repository history cleanup.',
+    'Revocation takes priority over cleanup. Removing repository history also has operational and coverage limits.',
   ],
   [
     'GitHub advisory for CVE-2025-30066',
     'https://github.com/advisories/GHSA-mrrh-fwg8-r2c3',
-    'The March 2025 compromise provides an example of secrets moving from runtime memory into logs. I do not equate use of the action with confirmed credential loss.',
+    'The March 2025 compromise exposed secrets through workflow logs. Use of the action does not establish confirmed credential loss.',
   ],
   [
     'CircleCI January 2023 incident report',
     'https://circleci.com/blog/jan-4-2023-incident-report/',
-    'The provider report helps me follow the response into credentials and connected systems.',
+    'The provider report documents response extending to credentials and connected systems.',
   ],
   [
     'NIST Cybersecurity Framework 2.0',
     'https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20',
-    'I use the framework to organise risk outcomes. My capability profile and planning sequence are proposed approaches rather than requirements prescribed by NIST.',
+    'The framework organizes risk outcomes. It does not prescribe the capability profile or planning sequence used here.',
   ],
 ];
 export default function References() {
   return (
     <main id="main" className="references">
-      <p className="eyebrow">Sources I return to</p>
+      <p className="eyebrow">Primary sources</p>
       <h1>References.</h1>
       <div className="reference-grid">
         <div className="prose">
-          <h2 id="editorial-approach">How I keep these notes</h2>
+          <h2 id="editorial-approach">Evidence and interpretation</h2>
           <p>
-            I keep the reasoning here so I can return to it later. I want to
-            remember what matters, how I reached a conclusion, and what I would
-            check before acting on it.
+            Technical claims link to their supporting sources. Hypothetical
+            examples and proposed operating approaches remain distinct from
+            documented incidents and external requirements.
           </p>
           <p>
-            I distinguish my interpretation from the facts supported by a
-            source. An imagined situation helps me work through an idea. It is
-            not a claim that I personally handled that incident.
+            An incident establishes a particular failure path. It does not
+            establish how often that path occurs elsewhere or the loss every
+            organization should expect. Limitations that affect a conclusion
+            remain beside it.
           </p>
           <p>
-            I keep uncertainty beside the conclusion it affects. A documented
-            failure tells me how something happened in that situation. It does
-            not establish how often the same thing happens elsewhere.
+            The capability profile and 90 day planning sequence are proposed
+            aids for assessment and delivery. They are not universal maturity
+            standards or regulatory requirements.
+          </p>
+          <h2>Review before implementation</h2>
+          <p>
+            The sources were checked on 5 September 2026. Product behavior can
+            change, so implementation needs to be checked against current
+            documentation.
           </p>
           <p>
-            My capability profile and 90 day sequence help organise my thinking.
-            They are not universal standards or regulatory requirements.
-          </p>
-          <h2>What I need to recheck</h2>
-          <p>
-            The sources were checked on 5 September 2026. Product behaviour can
-            change, so I would return to the current documentation before
-            implementation.
+            Regulatory claims need an assessment of the requirements applicable
+            to the particular entity and service. Detailed cryptographic
+            recovery and supplier limitations also need their own assessment.
           </p>
           <p>
-            I would also check the requirements that apply to the particular
-            entity and service before making a regulatory claim. Detailed
-            cryptographic recovery and supplier limitations need their own
-            assessment.
-          </p>
-          <p>
-            I keep corrections and proposed changes in the{' '}
+            Corrections and proposed changes can be raised in the{' '}
             <a href="https://github.com/llody9977/secret_exposure/issues">
               repository
             </a>

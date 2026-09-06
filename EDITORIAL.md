@@ -1,23 +1,19 @@
-# Writing as personal reflection
+# Writing guidance
 
-Write as though I am thinking aloud and recording my understanding for my future self. These notes should help me remember what matters, why I reached a conclusion, and what I would look for when I return to the subject.
+Use the approved business risk and action plan articles as the style references. Develop the subject through connected reasoning, concrete observations, and practical judgment. Preserve the explanation that connects a recommendation to its rationale, dependencies, and consequences.
 
-Use a reflective first person voice and connected full sentences. Start with the thought or question that matters to me. Let the reasoning develop naturally. Avoid turning every paragraph into instructions for an audience or making every section follow a rigid framework.
+A reflective voice does not require repeated personal pronouns. Do not manufacture that voice through "I would", "I want", or descriptions of what the writer is thinking. Do not explain that the material is a journal, notes for a future self, or a recap. Its purpose should guide the writing silently.
 
-Avoid dashes and colons as prose devices. Use full sentences instead. Parenthetical clarification is welcome where it reads naturally (i.e. explaining what I mean) or (e.g. making an idea concrete). Preserve required syntax in URLs, code, exact technical names, and quoted source titles.
+Move directly into the subject. Avoid phrases such as "in this article", "this series covers", or announcements about what will be explained next. Navigation belongs in the interface. Headings should identify the substantive thought rather than the writer's intention.
 
-Do not announce what the article explains. Avoid phrases such as "in this article", "this series covers", and "the next article will". Navigation belongs in the interface. The writing should move directly into the thought itself.
+Use full sentences and natural paragraphs. Avoid dashes and colons as prose devices. Parenthetical clarification is appropriate where useful (e.g. a concrete example). Preserve punctuation required by URLs, code, exact identifiers, and source titles. Use US English.
 
-First person reasoning must not become invented autobiography. It is appropriate to write "I would start with the service" or "The distinction that matters to me is whether access remains usable". Do not claim I handled an incident, spoke to a customer, or observed something at work unless I supplied that experience. Identify imagined situations naturally (e.g. "Suppose a deployment job exposes its key").
+Keep the voice practical and technically credible without invented personal experience, cultural stereotypes, hype, or generic slogans. Hypothetical situations should be recognizable as hypothetical. Do not claim the author handled an incident or observed something at work without supplied evidence.
 
-Keep the writing practical, precise, and clear. Avoid hype, filler, fear based loss estimates, cultural stereotypes, and generic compliance claims. Explain enough of the mechanism to preserve the reasoning when I revisit the note.
+Scanning is a sensor. Risk reduction also requires prevention, bounded authority, verification, replacement, invalidation, investigation, recovery, and governance. A clean repository scan cannot establish that every credential or exposure surface is safe.
 
-Scanning is a sensor. Risk reduction also requires prevention, bounded authority, revocation, investigation, recovery, and governance. A clean repository scan cannot establish that every credential or exposure surface is safe.
+Keep caveats beside the claims they change. Place detailed framework comparisons and methodology on the reference page unless they are necessary to understand the conclusion. A proposed capability profile or planning sequence must not be presented as an external standard.
 
-Keep caveats beside the claims they change. Put detailed framework comparisons and research methodology on the reference page unless they are necessary to understand the conclusion.
+Use primary sources for technical claims. Preserve the distinction between exposure and misuse, failed scans and clean results, alert closure and verified invalidation, and missing evidence and evidence of absence. Keep scope, denominators, dates, and uncertainty explicit where they affect meaning.
 
-Use primary sources for technical claims. Separate documented incidents from imagined examples and proposed approaches. Do not equate potential exposure with confirmed misuse or turn a limited test into a universal detection rate. Keep dates, denominators, scope, and uncertainty explicit where they matter.
-
-Preserve the distinction between finding a secret and stopping its use. Also preserve the distinction between exposure and misuse, failed scans and clean scans, and the absence of evidence and evidence of absence.
-
-Use concise headings that help me find a thought later. Keep interface labels simple, including Overview, Contents, and Next. Avoid article numbering, audience labels, and draft badges in public navigation.
+Scale revisions to the user's requested scope. When calibrating a new voice, revise the requested sample and wait for review before extending it. Once the user approves wider application, align the remaining material without needlessly rewriting approved articles.

@@ -1,51 +1,55 @@
-## I want less persistent authority to look after
+## Fewer persistent credentials reduce recurring work
 
-The direction that makes sense to me is to reduce how much reusable authority has to be distributed, protected, and recovered. Scanning remains useful, but removing a persistent credential can also remove some of the copying and rotation work associated with it.
+A reusable credential creates responsibilities wherever it is issued, copied, stored, and replaced. Removing the need for that credential can reduce several exposure opportunities together with some of the operational work needed to manage them.
 
-Workload identity changes how a service proves who it is and obtains access. It does not remove the need to protect the workload, issuer, trust policy, and target system. I would see the migration as a change in the trust model rather than the disappearance of security work.
+Workload identity offers that possibility where the platform and target support it. A service proves its identity and obtains bounded access instead of depending on a manually distributed persistent key. The workload, issuer, trust policy, and target still need protection. The responsibility changes shape rather than disappearing.
 
-## I would stabilise the current situation first
+That direction becomes useful when it connects to the current estate. An ambitious identity program does little for a known exposed key that nobody can revoke today. Immediate containment and longer architectural change need to proceed with their own priorities.
 
-Known consequential exposures, missing owners, and untested revocation paths would come first. I would establish which services and surfaces are covered, whether failed scans are visible, and whether responders can reach someone authorised to stop access.
+## The current response needs a dependable foundation
 
-The outcome I want from this stage is practical. Important exposed access can reach an owner and be invalidated. Any gaps remain visible. A future identity platform is not a reason to delay containment today.
+Known consequential exposures, missing owners, and untested revocation paths deserve early attention. The initial boundary should establish which services and surfaces are covered, whether failed scans are visible, and whether responders can reach someone authorized to act.
 
-## I would build one pattern that others can use
+The practical outcome is that important exposed access can reach an owner and be invalidated. Remaining gaps need an accountable route to resolution. This creates a safer foundation for migration without waiting for every legacy dependency to be redesigned.
 
-I would choose a service where the risk reduction matters and migration is feasible. Platform workloads, external automation, and static supplier integrations may need different patterns. Each should have an implementation example, a support owner, and a recovery procedure.
+With a defined service boundary and a working response, the architectural decision becomes which persistent access can be removed or narrowed.
 
-Temporary role credentials can replace manually managed keys for suitable cloud workloads. Federation can replace a stored cloud secret for external jobs where the target supports it. AWS and GitHub describe these respective mechanisms. I would choose based on the actual workload and provider rather than require one protocol everywhere. [AWS IAM guidance](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html), [GitHub OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
+## A supported pattern needs more than a working demonstration
 
-Before expanding the pattern, I would test both allowed and denied access. A short token lifetime does not help enough if the wrong job can request a fresh token whenever it wants.
+A suitable pilot combines meaningful risk reduction with a feasible implementation path. Platform workloads, external automation, and supplier integrations may need different patterns. Each needs a usable example, an operational owner, and a recovery procedure.
 
-## I would prioritise both risk and feasibility
+Temporary role credentials can replace manually managed keys for suitable cloud workloads. Federation can replace a stored cloud secret for external jobs where the target supports the exchange. AWS and GitHub describe these respective mechanisms. Provider and workload capabilities determine which approach is available. [AWS IAM guidance](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html), [GitHub OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
 
-Broad authority, many copies, and difficult recovery would make a persistent credential worth examining early. I would then consider the target's capabilities, consumer changes, ownership, and supplier constraints.
+The trust policy needs both allowed and denied cases tested. A short token lifetime cannot compensate for allowing the wrong job to obtain fresh access. Operational support also needs to cover issuer outages and the effect of expiry on running processes.
 
-For each migration, I want to retain the old access path, the new trust conditions, permissions, lifetime, logging, and emergency containment. I would test the service with the old credential unavailable and then invalidate and remove it after confirming service health.
+A pilot becomes reusable when another team can adopt and support it without reconstructing the original design decisions. That requires the dependency and recovery details as well as the successful authentication path.
 
-An indefinite fallback key would concern me. The new identity path may be working while the original authority remains usable. I would want an explicit end to that overlap.
+## Migration should remove the original access path
 
-Where migration is blocked, a narrower static credential with better isolation and dependable revocation can still be an improvement. I would keep the remaining constraint and the next decision date visible.
+Broad authority, many copies, and difficult recovery make a persistent credential worth examining early. Feasibility then depends on target support, consumer changes, ownership, and supplier constraints.
 
-## A 90 day sequence can help me organise the work
+For each migration, the old access path needs to be compared with the new trust conditions, permissions, lifetime, logging, and containment method. Testing the service with the original credential unavailable helps establish that the dependency has actually changed.
 
-I would use a 90 day plan as a starting hypothesis rather than a promise that every organisation can follow the same timetable. Incident urgency, service complexity, and delivery capacity should shape the pace.
+After service health is verified, the old access needs to be invalidated and removed. Leaving a broad key active as an indefinite fallback can preserve the original risk while reporting the service as migrated.
 
-During the first 30 days, I would focus on critical services, owners, known exposure, and one exercised revocation path. I would want a baseline that shows coverage gaps and response responsibilities. The useful milestone is that the responsibilities work in practice.
+Where migration is blocked, a narrower static credential with better isolation and tested revocation can still reduce risk. Its exception should retain the constraint, residual authority, owner, and next decision date. Partial improvement is useful when its remaining limits are explicit.
 
-During days 31 to 60, I would pilot the supported access pattern, improve prevention of new exposure, and address the operational obstacles. I would look for a successful replacement and evidence that an unauthorised access attempt is rejected. The operational team needs to be able to support the result.
+## The calendar should support readiness rather than replace it
 
-During days 61 to 90, I would expand to the next services, retire replaced credentials, and review exceptions and recurring causes. I would leave this stage with a capability profile and a prioritised backlog. Readiness should determine expansion rather than the calendar alone.
+An illustrative 90 day sequence can organize the work, but service complexity, incident urgency, and delivery capacity should determine the actual pace. The milestones need evidence of readiness rather than a date alone.
 
-## The new trust still needs governance
+During the first 30 days, the focus could be critical services, ownership, known exposure, and one exercised revocation path. The result should include coverage gaps and response responsibilities that have been tested in practice.
 
-Federation moves some of the work into trust policies and workload protection. I would review who can change the repository, deployment environment, issuer configuration, and target role. I would monitor unexpected issuance and test how to stop a compromised workload from obtaining more access.
+During days 31 to 60, a supported access pattern could be piloted while prevention of new exposure and operational obstacles are addressed. Successful replacement, denial of unintended access, and a supportable recovery procedure provide evidence for expansion.
 
-I would also plan for issuer outages and emergency access. A broad permanent fallback that becomes the normal response to inconvenience could recreate the original dependency.
+During days 61 to 90, the pattern could extend to the next services while replaced credentials are retired and recurring causes reviewed. A capability profile and prioritized backlog would show both progress and the dependencies still requiring a decision.
 
-## I would return to one concrete decision
+These are proposed planning intervals, not universal targets. A failed recovery exercise may justify delaying expansion while urgent exposure elsewhere still requires immediate action.
 
-I would choose a service, name its owner, and identify its most consequential persistent credential. I would then ask whether the next useful step is to remove that credential, narrow its authority, or improve containment.
+## The new trust needs continuing ownership
 
-The answer needs evidence that the change worked. Repeating that decision across the estate gives me a path I can revisit and explain, with fewer persistent credentials and a clearer understanding of the authority that remains.
+Federation concentrates important decisions in trust policies and workload security. Changes to repositories, deployment environments, issuer configuration, and target roles can alter who obtains access. Monitoring unexpected issuance and testing how to stop a compromised workload remain necessary.
+
+Emergency access also needs limits, monitoring, and rehearsal. A permanent broad fallback used whenever automation is inconvenient can recreate the same dependency the migration was meant to remove.
+
+The next decision can stay concrete. For one service and its most consequential persistent credential, determine whether removal, narrower authority, or improved containment offers the most useful reduction in risk. Evidence that the change worked provides the basis for repeating it elsewhere.

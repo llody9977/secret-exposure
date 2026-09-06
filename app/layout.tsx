@@ -4,11 +4,11 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(origin),
   title: {
-    default: 'Secret Exposure | Notes and reflections',
+    default: 'Secret Exposure | Business, architecture and governance',
     template: '%s | Secret Exposure',
   },
   description:
-    'Personal notes on secret exposure, business risk, security architecture, response, and governance.',
+    'Secret exposure and its implications for business risk, security architecture, response, and governance.',
   icons: { icon: path('/favicon.svg') },
 };
 export default function RootLayout({
@@ -40,9 +40,9 @@ export default function RootLayout({
         {children}
         <footer className="site-footer">
           <span>Secret Exposure</span>
-          <p>Thoughts to return to.</p>
+
           <a href={path('/references/#editorial-approach')}>
-            How I keep these notes
+            Editorial approach
           </a>
         </footer>
       </body>

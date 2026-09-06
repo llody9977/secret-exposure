@@ -16,44 +16,50 @@ export const articles = [
   },
   {
     slug: 'security-architecture',
+    updated: '6 September 2026',
     topic: 'Architecture',
-    title: 'How I think about designing for exposure',
+    title: 'Designing for the moment a credential escapes',
     description:
-      'I want the design to explain what happens after a credential leaves its intended boundary.',
+      'Storage, execution boundaries, permissions, and recovery determine what happens after a credential escapes.',
   },
   {
     slug: 'implementation',
+    updated: '6 September 2026',
     topic: 'Implementation',
     title: 'Why good practices become difficult to implement',
     description:
-      'I look at the dependencies that make straightforward advice difficult to put into practice.',
+      'Application behavior, supplier constraints, and delivery pressure determine whether good practices can be sustained.',
   },
   {
     slug: 'incident-response',
+    updated: '6 September 2026',
     topic: 'Response',
-    title: 'What I would focus on when a secret is exposed',
+    title: 'Responding when a secret is exposed',
     description:
-      'My first concern is whether the access still works and what it would take to stop it.',
+      'Containment needs to stop usable access while investigation and recovery account for the affected service.',
   },
   {
     slug: 'governance',
+    updated: '6 September 2026',
     topic: 'Governance',
-    title: 'What I would want GRC to see',
+    title: 'Giving GRC a clear view of credential risk',
     description:
-      'I want reporting that makes ownership, uncertainty, and the next decision clear.',
+      'Ownership, coverage, exceptions, and evidence make reporting useful for risk decisions.',
   },
   {
     slug: 'what-good-looks-like',
+    updated: '6 September 2026',
     topic: 'Assurance',
-    title: 'How I would recognise good control',
+    title: 'Recognizing good control through evidence',
     description:
-      'I look for capabilities that can be demonstrated and keep the gaps visible.',
+      'Effective access boundaries and tested recovery provide stronger assurance than a clean alert queue.',
   },
   {
     slug: 'path-forward',
+    updated: '6 September 2026',
     topic: 'Direction',
-    title: 'The direction I would take from here',
+    title: 'Moving towards fewer persistent credentials',
     description:
-      'I want less persistent authority to manage and a practical way to decide what to change next.',
+      'A phased approach connects immediate containment to supported identity patterns and the retirement of old access.',
   },
 ] as const;

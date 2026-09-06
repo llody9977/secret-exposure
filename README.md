@@ -1,6 +1,6 @@
 # Secret Exposure
 
-A personal journal of reasoning about secret exposure, kept for reference and recap. White background, blue and teal accents, and a fluid responsive layout.
+A connected exploration of secret exposure, business risk, architecture, operations, and governance. White background, blue and teal accents, and a fluid responsive layout.
 
 **Read:** https://llody9977.github.io/secret_exposure/
 
@@ -8,12 +8,12 @@ A personal journal of reasoning about secret exposure, kept for reference and re
 
 - [Why secret exposure matters to the business](content/articles/business-risk.md)
 - [Where to start and who needs to own it](content/articles/action-plan.md)
-- [How I think about designing for exposure](content/articles/security-architecture.md)
+- [Designing for the moment a credential escapes](content/articles/security-architecture.md)
 - [Why good practices become difficult to implement](content/articles/implementation.md)
-- [What I would focus on when a secret is exposed](content/articles/incident-response.md)
-- [What I would want GRC to see](content/articles/governance.md)
-- [How I would recognise good control](content/articles/what-good-looks-like.md)
-- [The direction I would take from here](content/articles/path-forward.md)
+- [Responding when a secret is exposed](content/articles/incident-response.md)
+- [Giving GRC a clear view of credential risk](content/articles/governance.md)
+- [Recognizing good control through evidence](content/articles/what-good-looks-like.md)
+- [Moving towards fewer persistent credentials](content/articles/path-forward.md)
 
 ## Write and publish
 
