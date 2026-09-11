@@ -95,6 +95,8 @@ services:
       - INTEGRATED_ADMIN_TOKEN=${INTEGRATED_ADMIN_TOKEN:?Run bootstrap --gen-env first}
       - AUTH_USERS_FILE=/poc/.bootstrap/auth_users.json
       - SOURCE_REVISION=${SOURCE_REVISION:-git_dynamic}
+      - HOST_UID=${HOST_UID:-}
+      - HOST_GID=${HOST_GID:-}
     volumes:
       - ./control:/poc/control
       - ./scripts:/poc/scripts

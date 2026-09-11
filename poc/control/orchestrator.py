@@ -301,6 +301,12 @@ def execute_operation(operation_id: str, execution_identity: str, simulate_inter
                 json.dump(dict(current, generation_id=operation_id), f)
                 f.flush(); os.fsync(f.fileno())
             os.replace(temp, path)
+            # The control container may run as root while the acceptance runner
+            # runs on the host. Preserve the generated credential's restrictive
+            # mode while returning ownership to that declared host user.
+            host_uid, host_gid = os.getenv('HOST_UID'), os.getenv('HOST_GID')
+            if host_uid and host_gid and host_uid.isdigit() and host_gid.isdigit():
+                os.chown(path, int(host_uid), int(host_gid))
             response = requests.post(f'{SUPERVISOR_URL}/restart/legacy-app',
                                      params={'fail':str(simulate_restart_failure).lower()},
                                      headers={'Authorization':f'Bearer {SUPERVISOR_SECRET}'}, timeout=45)

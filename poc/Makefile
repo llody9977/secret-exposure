@@ -52,6 +52,7 @@ bootstrap: build .env
 	@$(PYTHON) scripts/bootstrap.py
 
 up: .env
+	@mkdir -p evidence .bootstrap/legacy-creds
 	@docker compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d
 	@$(PYTHON) scripts/bootstrap.py --seed-only
 
