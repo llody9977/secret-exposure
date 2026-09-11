@@ -39,6 +39,11 @@ jobs:
           cd poc
           docker build -f Dockerfile.base -t poc-lab-base:latest .
 
+      - name: Generate ephemeral test TLS material
+        run: |
+          cd poc
+          ./certs/generate_certs.sh
+
       - name: Run isolated regression tests
         run: |
           cd poc
@@ -86,4 +91,6 @@ jobs:
         if: always()
         run: |
           cd poc
-          docker compose -p poc -f docker-compose.yml down -v --remove-orphans
+          if [ -f .env ]; then
+            docker compose -p poc -f docker-compose.yml down -v --remove-orphans
+          fi
