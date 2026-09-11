@@ -161,6 +161,13 @@ class ScenarioRunner:
         status_str = "PASS" if passed else "FAIL"
         print(f"  [{status_str}] {assertion_name}")
         if not passed:
+            # These verifier fields are deliberately constrained to safe
+            # identifiers, unlike subprocess output which may carry
+            # deployment-local credentials.
+            failure_stage = details.get("failure_stage")
+            error_type = details.get("error_type")
+            if failure_stage or error_type:
+                print(f"    diagnostic: stage={failure_stage or 'unknown'} error_type={error_type or 'unknown'}")
             self.scenario_failed[scenario_id] = True
 
     def run_a01(self):
