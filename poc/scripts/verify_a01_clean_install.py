@@ -74,6 +74,7 @@ def main():
         "CONTROL_ADDR": f"http://127.0.0.1:{port_map['INGRESS_CONTROL_PORT']}",
     })
     report = {"scenario": "A01", "run_id": run_id, "project": project, "image": image, "checks": [], "status": "FAIL"}
+    stage = "copy_source"
 
     try:
         shutil.copytree(POC_DIR, sandbox, ignore=shutil.ignore_patterns(*EXCLUDED))
@@ -82,19 +83,27 @@ def main():
             raise RuntimeError(f"fresh source copy contains runtime state: {absent}")
         report["checks"].append({"name": "fresh source tree excludes generated runtime state", "passed": True})
 
+        stage = "doctor"
         run(["make", "doctor"], cwd=sandbox, env=env, timeout=120)
         report["checks"].append({"name": "environment preflight succeeds", "passed": True})
 
         # This invokes the declared build and bootstrap targets against a unique
         # image and Compose project, preventing reuse of the active lab state.
+        stage = "bootstrap"
         run(["make", "bootstrap"], cwd=sandbox, env=env, timeout=900)
+        stage = "start_services"
         run(["make", "up"], cwd=sandbox, env=env, timeout=300)
+        stage = "health_check"
         wait_for_health(f"http://127.0.0.1:{port_map['INGRESS_CONTROL_PORT']}/api/health")
+        stage = "image_inspection"
         image_id = run(["docker", "image", "inspect", "--format", "{{.Id}}", image], cwd=sandbox, env=env).stdout.strip()
         report["checks"].append({"name": "fresh image build, bootstrap, and isolated health check succeed", "passed": bool(image_id), "image_id": image_id})
         report["status"] = "PASS"
     except Exception as exc:
-        report["error"] = str(exc)
+        # Evidence and CI logs intentionally carry only a stage and exception
+        # class. Command output can contain bootstrap-local credentials.
+        report["failure_stage"] = stage
+        report["error_type"] = type(exc).__name__
         raise
     finally:
         (evidence_dir / "a01-clean-install.json").write_text(json.dumps(report, indent=2) + "\n")

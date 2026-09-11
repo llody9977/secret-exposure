@@ -174,11 +174,13 @@ class ScenarioRunner:
             after = set(os.listdir(os.path.join(POC_DIR, "evidence"))) if os.path.isdir(os.path.join(POC_DIR, "evidence")) else set()
             run_dirs = sorted(name for name in after - before if name.startswith("a01-"))
             details = {"verifier_exit_code": check.returncode, "evidence_run": run_dirs[-1] if run_dirs else None}
-            if check.returncode == 0 and run_dirs:
+            if run_dirs:
                 artifact = os.path.join(POC_DIR, "evidence", run_dirs[-1], "a01-clean-install.json")
                 with open(artifact) as handle:
                     clean_install = json.load(handle)
-                self.external_evidence.append({"scenario_id": "A01", "kind": "fresh_source_install", "artifact": artifact, "result": clean_install})
+                details.update({key: clean_install[key] for key in ("failure_stage", "error_type") if key in clean_install})
+                if check.returncode == 0:
+                    self.external_evidence.append({"scenario_id": "A01", "kind": "fresh_source_install", "artifact": artifact, "result": clean_install})
             self.record_assertion("A01", "Fresh source copy builds, bootstraps, and becomes healthy in an isolated project", check.returncode == 0, details)
             self.results["A01"] = "FAIL" if self.scenario_failed.get("A01") else "PASS"
             return
@@ -1215,11 +1217,13 @@ class ScenarioRunner:
             after = set(os.listdir(os.path.join(POC_DIR, "evidence"))) if os.path.isdir(os.path.join(POC_DIR, "evidence")) else set()
             run_dirs = sorted(name for name in after - before if name.startswith("a23-"))
             details = {"verifier_exit_code": check.returncode, "evidence_run": run_dirs[-1] if run_dirs else None}
-            if check.returncode == 0 and run_dirs:
+            if run_dirs:
                 artifact = os.path.join(POC_DIR, "evidence", run_dirs[-1], "a23-isolated-lifecycle.json")
                 with open(artifact) as handle:
                     lifecycle = json.load(handle)
-                self.external_evidence.append({"scenario_id": "A23", "kind": "isolated_compose_lifecycle", "artifact": artifact, "result": lifecycle})
+                details.update({key: lifecycle[key] for key in ("failure_stage", "error_type") if key in lifecycle})
+                if check.returncode == 0:
+                    self.external_evidence.append({"scenario_id": "A23", "kind": "isolated_compose_lifecycle", "artifact": artifact, "result": lifecycle})
             self.record_assertion(
                 "A23", "Disposable full-stack restart, unseal, scoped reset, and unrelated-workload sentinel all succeed",
                 check.returncode == 0, details,

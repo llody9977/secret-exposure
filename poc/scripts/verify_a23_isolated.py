@@ -107,40 +107,56 @@ def main():
     })
     report = {"scenario": "A23", "run_id": run_id, "project": project, "checks": [], "status": "FAIL"}
     reset_completed = False
+    stage = "copy_source"
 
     try:
         shutil.copytree(POC_DIR, sandbox, ignore=shutil.ignore_patterns(*RUNTIME_NAMES))
+        stage = "generate_environment"
         run(["make", ".env"], cwd=sandbox, env=env)
+        stage = "generate_tls"
         run(["./certs/generate_certs.sh"], cwd=sandbox, env=env)
         compose = ["docker", "compose", "-p", project, "-f", str(sandbox / "docker-compose.yml")]
+        stage = "bootstrap_dependencies"
         run(compose + ["up", "-d", "postgres", "vault", "spire-server", "lab-ingress"], cwd=sandbox, env=env)
+        stage = "bootstrap"
         run([sys.executable, "scripts/bootstrap.py"], cwd=sandbox, env=env)
+        stage = "start_services"
         compose_up(compose, cwd=sandbox, env=env)
+        stage = "seed_control_plane"
         run([sys.executable, "scripts/bootstrap.py", "--seed-only"], cwd=sandbox, env=env)
 
         control = f"http://127.0.0.1:{ports['INGRESS_CONTROL_PORT']}/api/health"
+        stage = "initial_health_check"
         wait_for(control, verify=False, expected={200})
         report["checks"].append({"name": "initial isolated stack is healthy", "passed": True})
 
+        stage = "start_sentinel"
         run(["docker", "run", "-d", "--name", sentinel, "--network", "none", "poc-lab-base:latest", "sleep", "600"], cwd=sandbox, env=env)
         report["checks"].append({"name": "unrelated workload sentinel started", "passed": True, "container": sentinel})
 
+        stage = "restart_stack"
         run(compose + ["down"], cwd=sandbox, env=env)
         compose_up(compose, cwd=sandbox, env=env)
         vault = f"https://127.0.0.1:{ports['INGRESS_VAULT_PORT']}"
         ca_cert = sandbox / "certs" / "ca.pem"
+        stage = "vault_health_after_restart"
         health = wait_for(f"{vault}/v1/sys/health", verify=str(ca_cert), expected={200, 429, 472, 473, 501, 503})
         if health.status_code == 503 or health.json().get("sealed"):
+            stage = "unseal_after_restart"
             key_data = json.loads((sandbox / ".bootstrap" / "vault_keys.json").read_text())
             response = requests.post(f"{vault}/v1/sys/unseal", json={"key": key_data["keys"][0]}, verify=str(ca_cert), timeout=8)
             if response.status_code != 200 or response.json().get("sealed"):
                 raise RuntimeError("Vault did not unseal after full-stack restart")
+        stage = "seed_after_restart"
         run([sys.executable, "scripts/bootstrap.py", "--seed-only"], cwd=sandbox, env=env)
+        stage = "health_after_restart"
         wait_for(control, verify=False, expected={200})
         report["checks"].append({"name": "full stack restart preserves and restores Vault-backed state", "passed": True})
 
+        stage = "confined_reset"
         run(["make", "reset", "CONFIRM=yes"], cwd=sandbox, env=env)
         reset_completed = True
+        stage = "sentinel_check"
         inspect = run(["docker", "inspect", "--format", "{{.State.Running}}", sentinel], cwd=sandbox, env=env)
         sentinel_running = inspect.stdout.strip() == "true"
         report["checks"].append({"name": "confined reset leaves unrelated workload running", "passed": sentinel_running, "container": sentinel})
@@ -148,7 +164,10 @@ def main():
             raise RuntimeError("unrelated workload was affected by isolated reset")
         report["status"] = "PASS"
     except Exception as exc:
-        report["error"] = str(exc)
+        # Keep failure evidence safe to archive and print: command output may
+        # contain deployment-local credentials.
+        report["failure_stage"] = stage
+        report["error_type"] = type(exc).__name__
         raise
     finally:
         report["reset_completed"] = reset_completed
