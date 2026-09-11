@@ -1,0 +1,68 @@
+FROM debian:trixie-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -qq && \
+    apt-get install -y -qq --no-install-recommends \
+        ca-certificates \
+        curl \
+        wget \
+        unzip \
+        tar \
+        git \
+        jq \
+        procps \
+        net-tools \
+        openssl \
+        postgresql \
+        postgresql-contrib \
+        python3 \
+        python3-pip \
+        python3-venv \
+        golang-go && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Architecture detection (supports both linux/amd64 and linux/arm64 per ASSESSMENT Finding #8)
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        VAULT_ARCH="amd64" && SPIRE_ARCH="amd64-musl" && GITLEAKS_ARCH="x64"; \
+    elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then \
+        VAULT_ARCH="arm64" && SPIRE_ARCH="arm64-musl" && GITLEAKS_ARCH="arm64"; \
+    else \
+        echo "Unsupported architecture: $ARCH" && exit 1; \
+    fi && \
+    # Install Vault 1.18.5
+    curl -s -L -o /tmp/vault.zip "https://releases.hashicorp.com/vault/1.18.5/vault_1.18.5_linux_${VAULT_ARCH}.zip" && \
+    unzip -q /tmp/vault.zip -d /usr/local/bin/ && \
+    chmod +x /usr/local/bin/vault && \
+    rm -f /tmp/vault.zip && \
+    # Install SPIRE 1.11.2
+    curl -s -L -o /tmp/spire.tar.gz "https://github.com/spiffe/spire/releases/download/v1.11.2/spire-1.11.2-linux-${SPIRE_ARCH}.tar.gz" && \
+    tar -xzf /tmp/spire.tar.gz -C /tmp/ && \
+    cp /tmp/spire-1.11.2/bin/spire-server /usr/local/bin/ && \
+    cp /tmp/spire-1.11.2/bin/spire-agent /usr/local/bin/ && \
+    chmod +x /usr/local/bin/spire-server /usr/local/bin/spire-agent && \
+    rm -rf /tmp/spire* && \
+    # Install Gitleaks 8.24.0
+    curl -s -L -o /tmp/gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v8.24.0/gitleaks_8.24.0_linux_${GITLEAKS_ARCH}.tar.gz" && \
+    tar -xzf /tmp/gitleaks.tar.gz -C /usr/local/bin/ gitleaks && \
+    chmod +x /usr/local/bin/gitleaks && \
+    rm -f /tmp/gitleaks.tar.gz
+
+# Set up Python virtual environment
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --no-cache-dir \
+    fastapi==0.115.8 \
+    uvicorn==0.34.0 \
+    pydantic==2.10.6 \
+    psycopg2-binary==2.9.10 \
+    httpx==0.28.1 \
+    requests==2.32.3 \
+    cryptography==44.0.1 \
+    hvac==2.3.0 \
+    pytest==8.3.4
+
+ENTRYPOINT []
+CMD ["bash"]

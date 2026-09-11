@@ -1,0 +1,89 @@
+name: Credential Lifecycle Laboratory regression checks
+
+on:
+  push:
+    paths:
+      - 'poc/**'
+      - '.github/workflows/poc-ci.yml'
+  pull_request:
+    paths:
+      - 'poc/**'
+      - '.github/workflows/poc-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate Lab Doctor
+        run: |
+          cd poc
+          python3 scripts/doctor.py
+
+      - name: Build Lab Base Container
+        run: |
+          cd poc
+          docker build -f Dockerfile.base -t poc-lab-base:latest .
+
+      - name: Run isolated regression tests
+        run: |
+          cd poc
+          make unit-test
+
+      - name: Build Linux SPIFFE binaries
+        run: |
+          cd poc
+          make build-bins
+
+      - name: Install live acceptance runner dependencies
+        run: |
+          python3 -m pip install --disable-pip-version-check \
+            requests==2.32.3 psycopg2-binary==2.9.10 playwright==1.51.0
+          python3 -m playwright install --with-deps chromium
+
+      - name: Run full live core acceptance
+        run: |
+          cd poc
+          make bootstrap
+          make up
+          make test
+
+      - name: Verify Gitleaks Scanner Rules
+        run: |
+          cd poc
+          python3 scripts/generate_fixtures.py
+          # Positive fixture MUST find leaks (gitleaks returns exit code 1 when leaks are found).
+          # Exit 0 means NO leaks found (failure for positive fixture).
+          # Exit > 1 means scanner error / syntax error (failure for CI).
+          set +e
+          docker run --rm -v "$(pwd)":/poc poc-lab-base:latest gitleaks detect --config /poc/scanner/gitleaks.toml --source /poc/fixtures/positive_log.txt --no-git --redact
+          SCAN_EXIT=$?
+          set -e
+          if [ $SCAN_EXIT -eq 1 ]; then
+            echo "Positive fixture correctly detected leaks (exit code 1)."
+          else
+            echo "ERROR: Expected gitleaks exit code 1 (leaks found), but got $SCAN_EXIT"
+            exit 1
+          fi
+          # Negative fixture MUST be clean (exit 0)
+          docker run --rm -v "$(pwd)":/poc poc-lab-base:latest gitleaks detect --config /poc/scanner/gitleaks.toml --source /poc/fixtures/negative_log.txt --no-git --redact
+
+      - name: Remove live acceptance resources
+        if: always()
+        run: |
+          cd poc
+          docker compose -p poc -f docker-compose.yml down -v --remove-orphans
