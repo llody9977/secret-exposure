@@ -87,5 +87,6 @@ reset:
 		if [ "$$answer" != "yes" ]; then echo "Reset aborted."; exit 1; fi; \
 	fi
 	@docker compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) down -v --remove-orphans
-	@rm -rf .bootstrap/ .vault-data/ fixtures/ evidence/ .env
+	@docker run --rm -v "$$(pwd):/poc" -w /poc $(BASE_IMAGE) \
+		sh -ec 'rm -rf .bootstrap/ .vault-data/ fixtures/ evidence/ .env'
 	@echo "Lab reset completed cleanly without affecting other Docker projects."
