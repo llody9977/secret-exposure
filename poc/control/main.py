@@ -1147,7 +1147,7 @@ def trigger_demo_identity():
 def trigger_demo_suite():
     return run_scoped_demo("A01,A02,A03,A04,A05,A06,A07,A08,A09,A10,A11,A12,A13,A14,A15,A16,A17,A18,A19,A20,A21,A22,A23,A24,A25,A26")
 
-# --- GITLAB CI/CD SIMULATOR & WORKFLOW (REQ037) ---
+# --- LOCAL PIPELINE WORKFLOW SIMULATOR ---
 from gitlab_simulator import GitLabSimulator, GITLAB_INTERNAL_URL, gl_token
 gitlab_sim = GitLabSimulator()
 
@@ -1766,7 +1766,7 @@ def proxy_integrated_renew():
 
 # /api/lab/access REMOVED — exposed bootstrap credentials without authentication (ASSESSMENT Finding #2)
 
-# --- GITLAB RUNNER STATUS PROXY ENDPOINT ---
+# --- LOCAL PIPELINE STATUS ENDPOINT ---
 @app.get("/api/gitlab/runner/status")
 def get_gitlab_runner_status():
     """Query live runner status from GitLab CE API"""

@@ -26,11 +26,11 @@ The operation therefore needs separate containment and recovery outcomes. A cred
 
 Consider a local reporting service whose database password is read from a file at startup. Before provisioning, its approved record identifies the reporting owner, synthetic data classification, database account, consumer process, and restart procedure. Vault creates and manages the access. An agent delivers the protected configuration without requiring a developer to copy the password.
 
-The proposed exercise deliberately exposes that disposable local credential in an ignored fixture. Gitleaks produces a finding, and a restricted adapter correlates its fingerprint with the registered credential version. The workflow obtains the service context from the registry and assigns the incident to its owner. An approved validator checks only the registered database using a harmless operation. An unavailable database produces an inconclusive result that remains visible.
+The exercise deliberately exposes a disposable local credential in an ignored fixture. Gitleaks produces a finding, and a restricted adapter correlates its fingerprint with the registered credential version. The workflow obtains the service context from the registry and assigns the incident to its owner. An approved validator checks only the registered database using a harmless operation. An unavailable database produces an inconclusive result that remains visible.
 
 After authorization, the executor rotates the registered Vault role, waits for the agent to render the replacement, and restarts the known consumer. Verification checks a new application transaction and rejection of the old password. Any existing database session is checked separately. The incident records the containment result and the measured service interruption, with investigation still required before closure.
 
-The default Docker lab uses a small local registry and incident service so the exercise can run without an enterprise subscription. An optional iTop adapter can supply real service management integration. ServiceNow can supply the corresponding enterprise records when an authorized instance is available. In each deployment, one selected system owns service context and ownership. The orchestrator retains identifiers and revisioned evidence rather than becoming a second editable source of ownership.
+The local lab uses its own small registry and incident service. It is the authority for service context and ownership in this demonstration. The orchestrator retains identifiers and revisioned evidence rather than becoming a second editable owner record.
 
 ## Failure handling is part of the demonstration
 

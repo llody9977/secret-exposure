@@ -133,7 +133,7 @@ class GitLabSimulator:
             pipeline_iid = pipeline_id
             web_url = f"{GITLAB_EXTERNAL_URL}/root/legacy-customer-portal/-/pipelines"
 
-        # Define initial stage breakdown while GitLab runner is actively working
+        # Define the initial local pipeline stages.
         init_stages = [
             {"name": "build", "status": "running", "duration_s": 0},
             {"name": "secret-detect", "status": "pending", "duration_s": 0},
@@ -513,7 +513,7 @@ class GitLabSimulator:
     }
 
     def _simulate_stages(self, db_record):
-        """Deterministic stage progression for pipelines with no GitLab Runner.
+        """Deterministic stage progression for the local pipeline simulator.
 
         Returns (stages, status) derived from the pipeline's age and scan result, or
         None once a real outcome / SecOps decision is already persisted (so it is
@@ -599,7 +599,7 @@ class GitLabSimulator:
             {"name": "deploy", "status": "pending", "duration_s": 0}
         ]
 
-        # No GitLab Runner executes jobs in this lab; synthesize stage progression
+        # The local simulator provides deterministic stage progression.
         # from pipeline age. Real job data (below) overrides this if a runner exists.
         is_simulated = False
         _sim = self._simulate_stages(db_record)

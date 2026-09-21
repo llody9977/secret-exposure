@@ -46,6 +46,6 @@ A convincing review therefore needs more than a diagram. It needs evidence that 
 
 ## Authoritative records connect the control systems
 
-The service catalog or CMDB owns the service context and its accountable owner. The secret manager owns credential material and issuance. An incident system owns response decisions. Stable identifiers connect these records without copying secret values into a ticket or inventory. ServiceNow can occupy the service and incident roles, but the architecture depends on maintained relationships and usable interfaces rather than a particular product.
+The service catalog or CMDB owns the service context and its accountable owner. The secret manager owns credential material and issuance. An incident system owns response decisions. Stable identifiers connect these records without copying secret values into a ticket or inventory. The architecture depends on maintained relationships and usable interfaces rather than a particular product.
 
 The design also needs a credential version relationship and a record of consumer behavior. A detected value may belong to an earlier version, while a consumer may still hold an old connection. Resolving both prevents an automated response from rotating unrelated current access or declaring containment before the target rejects the exposed authority. Validation must use approved targets and treat unavailable evidence as inconclusive.

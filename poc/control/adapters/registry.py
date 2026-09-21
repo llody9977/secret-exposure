@@ -30,27 +30,3 @@ class LocalRegistryAdapter(RegistryAdapter):
         if svc.get("owner_group"):
             return {"owner_group": svc["owner_group"], "type": "authoritative"}
         return {"owner_group": svc.get("fallback_group", "security_fallback"), "type": "fallback"}
-
-class ITopRegistryAdapter(RegistryAdapter):
-    def __init__(self, live: bool = False):
-        self.live = live
-
-    def get_service(self, service_id: str) -> Optional[Dict[str, Any]]:
-        if not self.live:
-            return {"service_id": service_id, "adapter": "itop", "status": "contract_simulated"}
-        raise NotImplementedError("Live iTop instance unconfigured")
-
-    def resolve_owner(self, service_id: str) -> Dict[str, str]:
-        return {"owner_group": "itop_mock_team", "type": "contract_simulated"}
-
-class ServiceNowRegistryAdapter(RegistryAdapter):
-    def __init__(self, live: bool = False):
-        self.live = live
-
-    def get_service(self, service_id: str) -> Optional[Dict[str, Any]]:
-        if not self.live:
-            return {"service_id": service_id, "adapter": "servicenow", "status": "pending_instance"}
-        raise NotImplementedError("Live ServiceNow instance unconfigured")
-
-    def resolve_owner(self, service_id: str) -> Dict[str, str]:
-        return {"owner_group": "servicenow_pending_team", "type": "contract_pending"}

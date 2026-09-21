@@ -6,11 +6,9 @@ REQ001. Build a reproducible local lab in this directory. Demonstrate that respo
 
 REQ002. Preserve the publication application and its build. Do not replace the website or deploy the lab to GitHub Pages. Runtime code, data, and integration configuration belong under poc/. Add an independent CI workflow with no access to production credentials.
 
-REQ003. These are proposed requirements, not results from a completed implementation. Choose compatible released component versions during implementation, record the official sources and licenses, pin image digests and dependency versions, and commit the lock records. Do not silently substitute products or claim untested platforms work.
+REQ003. Record compatible released component versions, official sources, licenses, image digests, and dependency versions. Do not silently substitute products or claim untested platforms work.
 
-REQ004. The mandatory core uses Docker Compose, real Vault, real PostgreSQL, real SPIRE, a scanner, a response orchestrator, a local registry and incident UI, and three demonstration applications. Use Python with FastAPI and PostgreSQL for the custom control services, Go with a maintained SPIFFE library for the identity demonstration, and Gitleaks as the initial scanner. Alternate libraries may be selected with a recorded compatibility reason. The core registry is explicitly a reference implementation, not a simulation of ServiceNow or iTop.
-
-REQ005. Deliver optional real integration profiles separately. GitLab executes approved response jobs. iTop supplies service context and incident records through an adapter. ServiceNow supplies enterprise CMDB and incident integration when a user provides a suitable instance. These profiles are not prerequisites for a passing core. Unavailable external access must produce a documented unverified status, never a fabricated success.
+REQ004. The mandatory core uses Docker Compose, real Vault, real PostgreSQL, real SPIRE, a scanner, a response orchestrator, a local registry and incident UI, and three demonstration applications. Use Python with FastAPI and PostgreSQL for the custom control services, Go with a maintained SPIFFE library for the identity demonstration, and Gitleaks as the initial scanner. Alternate libraries may be selected with a recorded compatibility reason. The core registry is a local reference implementation, not an enterprise service-management integration.
 
 ## Component responsibilities
 
@@ -74,7 +72,7 @@ REQ025. Provide seeded local identities for requester, approver, service owner, 
 
 REQ026. Provide targets for make doctor, make bootstrap, make up, make demo-legacy, make demo-integrated, make demo-identity, make test, make evidence, make down, and make reset. Doctor validates Docker Compose, architecture, ports, resources, and required files without dumping credentials. Reset is confined to this Compose project and requires explicit confirmation before deleting its data. Never run a global Docker prune.
 
-REQ027. Target Linux amd64 and Docker Desktop arm64. Verify each platform or mark it unverified. Record actual peak memory, bootstrap time, and test time on tested hardware. Begin resource planning at 4 CPUs and 8 GiB available for the core, but treat this as a provisional budget to measure, not a proven minimum. Provide a separate measured budget for the optional GitLab profile and flag image emulation requirements.
+REQ027. Target Linux amd64 and Docker Desktop arm64. Verify each platform or mark it unverified. Record actual peak memory, bootstrap time, and test time on tested hardware. Begin resource planning at 4 CPUs and 8 GiB available for the core, but treat this as a provisional budget to measure, not a proven minimum. Flag image emulation requirements.
 
 ## Findings, validation, and incident state
 
@@ -94,7 +92,7 @@ REQ034. Operations use an idempotency key derived from incident, credential vers
 
 ## API and integration contracts
 
-The following routes are required interfaces for the reference implementation. Exact JSON Schemas and OpenAPI files must be produced during implementation. IDs and status values must use a single shared model.
+The reference implementation exposes the following core interfaces. JSON Schemas are in `schemas/`, and the running API exposes OpenAPI. IDs and status values use a single shared model.
 
 | Interface                          | Required contract                                                                                                   |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -110,15 +108,9 @@ The following routes are required interfaces for the reference implementation. E
 
 REQ035. Use consistent 401, 403, 404, 409, and 422 semantics. Never accept a shell command, Vault path, SQL statement, or arbitrary callback URL as a user-selected action parameter. Validation and execution callbacks must be authenticated and bound to the operation and executor identity.
 
-REQ036. Define RegistryAdapter, IncidentAdapter, SecretIssuerAdapter, IdentityAdapter, ValidatorAdapter, and ExecutorAdapter boundaries. The local executor and optional GitLab executor invoke the same approved operation contract. Changing an adapter must not change containment or closure semantics.
+REQ036. Define RegistryAdapter, IncidentAdapter, SecretIssuerAdapter, IdentityAdapter, ValidatorAdapter, and ExecutorAdapter boundaries. The local executor invokes the approved operation contract. Changing an adapter must not change containment or closure semantics.
 
-REQ037. GitLab profile must provide real project setup, runner registration, and pipeline configuration. Use a narrowly bound job identity token for Vault or the orchestrator, verifying issuer, audience, project, and protected execution context. Account for the selected edition's feature availability. The free baseline may use explicit supported API authentication instead of a premium secrets keyword. Jobs receive operation IDs, not raw credentials or administrator tokens. Bind execution to a reviewed code revision. Untrusted merge request jobs cannot execute containment. A successful job reports evidence but cannot unilaterally close an incident.
-
-REQ038. iTop profile must create or import a reproducible service model and map owner/support groups, service relationships, classification extensions, credential metadata references, and incident state. Include mapping documentation, setup migrations, rollback, and read/write contract tests. Do not store secret values in iTop. Validate the actual API and license requirements of the selected release before choosing an image. No invented official container image.
-
-The active registry adapter is authoritative for service context and ownership. Select exactly one registry authority per deployment. The local control database retains workflow state, version correlations, and revisioned context snapshots, not a competing editable copy of external ownership. External incident IDs map to stable local incident IDs. Reconcile changes and report stale snapshots during adapter outages. Do not silently fall back to local ownership while claiming the external registry remains authoritative.
-
-REQ039. ServiceNow profile must document the specific CMDB/CSDM and incident table mapping applicable to the supplied instance, required roles and plugins, reference field resolution, pagination, rate limiting, assignment rules, and API authentication. Confirm capabilities against that instance. Contract tests alone must be labeled as such. No claim of real integration until a disposable authorized instance has passed a read, assignment, update, and evidence-link round trip. This adapter remains pending if no instance is provided.
+The local registry is authoritative for service context and ownership. The control database retains workflow state, version correlations, and revisioned context snapshots. It does not claim to replicate an external ownership system.
 
 ## Evidence, metrics, and presentation
 
@@ -136,11 +128,11 @@ The core laboratory implements local Compose deployment, bootstrap, intake and a
 
 A01–A26 define the required core evidence. A passing run supports only the recorded conditions, source state, and local environment.
 
-GitLab runner execution, iTop, ServiceNow, and other external adapters are not core claims. Each remains unverified until an authorized environment completes its own declared acceptance evidence.
+This POC contains no external-adapter implementation or acceptance claim.
 
 ## Primary references
 
-The requirements above are proposed engineering decisions. The following sources establish relevant product mechanisms; they do not certify a deployment outside the documented laboratory scope.
+The following sources establish relevant product mechanisms; they do not certify a deployment outside the documented laboratory scope.
 
 [Vault database secrets](https://developer.hashicorp.com/vault/docs/secrets/databases) documents static and dynamic role mechanisms.
 
@@ -149,9 +141,5 @@ The requirements above are proposed engineering decisions. The following sources
 [Vault leases](https://developer.hashicorp.com/vault/docs/concepts/lease) describes renewal and revocation semantics.
 
 [SPIRE concepts](https://spiffe.io/docs/latest/spire-about/spire-concepts/) describes attestation and issuance. [SPIFFE concepts](https://spiffe.io/docs/latest/spiffe/concepts/) describes identity documents and isolation assumptions.
-
-[GitLab Vault integration](https://docs.gitlab.com/ci/secrets/hashicorp_vault/) describes job identity integration. [GitLab installation requirements](https://docs.gitlab.com/install/requirements/) supports separate resource planning.
-
-[iTop source](https://github.com/Combodo/iTop) describes the CMDB and service management product. [ServiceNow CSDM](https://www.servicenow.com/docs/r/servicenow-platform/common-service-data-model-csdm/ci-relationships.html) describes service relationships.
 
 [Gitleaks](https://github.com/gitleaks/gitleaks), [NIST CSF 2.0](https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20), and [NIST SP 800-53](https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final) support detector and evidence mapping work.

@@ -603,12 +603,12 @@
             <text x="252" y="105" class="node-sub" style="fill:#e24329;">root/legacy-customer-portal</text>
           </g>
 
-          <!-- Node: GitLab Runner + Gitleaks -->
+          <!-- Node: Local pipeline workflow + Gitleaks -->
           <g class="node-group" id="node-runner" oncontextmenu="openContextMenu(event, 'runner')">
             <rect x="520" y="48" width="255" height="72" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" class="node-box" />
             <rect x="521" y="49" width="3.5" height="70" fill="#b91c1c" />
-            <text x="537" y="72" class="node-title">&#9881;&#65039; GitLab Runner &#183; Gitleaks</text>
-            <text x="537" y="90" class="node-sub">Docker executor &#183; secret scanner</text>
+            <text x="537" y="72" class="node-title">&#9881;&#65039; Local pipeline &#183; Gitleaks</text>
+            <text x="537" y="90" class="node-sub">Local workflow &#183; secret scanner</text>
             <text x="537" y="105" class="node-sub" style="fill:#b91c1c;">zricethezav/gitleaks:latest</text>
           </g>
 
@@ -654,14 +654,14 @@
 
           <!-- ==================== APPLICATION ZONE ==================== -->
           <rect x="235" y="150" width="670" height="340" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4" />
-          <text x="250" y="169" class="zone-label" fill="#475569">Application Zone &#8212; apps, ITSM intake &amp; dashboard</text>
+          <text x="250" y="169" class="zone-label" fill="#475569">Application Zone &#8212; apps, local intake &amp; dashboard</text>
 
-          <!-- Node: ServiceNow Intake -->
+          <!-- Node: Local intake -->
           <g class="node-group" id="node-intake" style="cursor: default;">
             <rect x="250" y="198" width="190" height="84" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" class="node-box" />
             <rect x="251" y="199" width="3.5" height="82" fill="#0284c7" />
-            <text x="266" y="224" class="node-title">&#128203; ServiceNow Intake</text>
-            <text x="266" y="244" class="node-sub">ITSM portal &amp; governance</text>
+            <text x="266" y="224" class="node-title">&#128203; Local Intake</text>
+            <text x="266" y="244" class="node-sub">Local intake &amp; governance</text>
             <text x="266" y="260" class="node-sub" style="fill:#0284c7;">POST /api/intakes</text>
           </g>
 
@@ -773,11 +773,11 @@
           <path id="path-push" d="M 110 196 L 110 84 L 233 84" fill="none" stroke="#dc2626" stroke-width="2.5" class="flow-line-fast" marker-end="url(#arrow-red)" />
           <text x="120" y="78" font-size="8" font-weight="700" fill="#dc2626">Git push</text>
 
-          <!-- Flow: Developer -> ServiceNow Intake -->
+          <!-- Flow: Developer -> local intake -->
           <path id="path-intake" d="M 185 236 L 247 236" fill="none" stroke="#0284c7" stroke-width="2" class="flow-line" marker-end="url(#arrow-blue)" />
           <text x="216" y="231" text-anchor="middle" font-size="8" font-weight="700" fill="#0284c7">Intake</text>
 
-          <!-- Flow: ServiceNow Intake -> Control Plane (down corridor x=456) -->
+          <!-- Flow: local intake -> Control Plane (down corridor x=456) -->
           <path id="path-prov" d="M 440 236 L 456 236 L 456 540" fill="none" stroke="#0284c7" stroke-width="2" class="flow-line" marker-end="url(#arrow-blue)" />
           <text x="452" y="500" text-anchor="middle" font-size="8" font-weight="700" fill="#0284c7">Intake approval</text>
 
@@ -1384,7 +1384,7 @@
         dpBadge = 'status-warning';
         dpIcon = '<span class="spinner" style="width:12px; height:12px; display:inline-block; vertical-align:middle; margin-right:4px;"></span>';
         dpLabel = 'DEPLOYING...';
-        dpNote = '(Native deployment job executing in GitLab Runner)';
+        dpNote = '(Deployment workflow executing in the local simulator)';
       } else if (sDeploy.status === 'passed' || sDeploy.status === 'success') {
         dpBadge = 'status-passed';
         dpIcon = '✓';
@@ -1435,7 +1435,7 @@
             <span class="status-badge ${bBadge}" style="font-size:0.75rem; display:inline-flex; align-items:center;">
               ${bIcon} <span style="margin-left:3px;">${bLabel}</span>
             </span>
-            ${sBuild.job_url ? `<a href="${sBuild.job_url}" target="_blank" style="font-size:0.75rem; color:#3b82f6; text-decoration:none;" title="View GitLab Runner Job">#${sBuild.job_id || ''} ↗</a>` : ''}
+            ${sBuild.job_url ? `<a href="${sBuild.job_url}" target="_blank" style="font-size:0.75rem; color:#3b82f6; text-decoration:none;" title="View pipeline job">#${sBuild.job_id || ''} ↗</a>` : ''}
           </div>
         </div>
 
@@ -1454,7 +1454,7 @@
             <span class="status-badge ${dBadge}" style="font-size:0.75rem; display:inline-flex; align-items:center;">
               ${dIcon} <span style="margin-left:3px;">${dLabel}</span>
             </span>
-            ${sDetect.job_url ? `<a href="${sDetect.job_url}" target="_blank" style="font-size:0.75rem; color:#3b82f6; text-decoration:none;" title="View GitLab Runner Job">#${sDetect.job_id || ''} ↗</a>` : ''}
+            ${sDetect.job_url ? `<a href="${sDetect.job_url}" target="_blank" style="font-size:0.75rem; color:#3b82f6; text-decoration:none;" title="View pipeline job">#${sDetect.job_id || ''} ↗</a>` : ''}
           </div>
         </div>
 
@@ -1476,7 +1476,7 @@
             <span class="status-badge ${dpBadge}" style="font-size:0.75rem; display:inline-flex; align-items:center;">
               ${dpIcon} <span style="margin-left:3px;">${dpLabel}</span>
             </span>
-            ${sDeploy.job_url ? `<a href="${sDeploy.job_url}" target="_blank" style="font-size:0.75rem; color:#3b82f6; text-decoration:none;" title="View GitLab Runner Job">#${sDeploy.job_id || ''} ↗</a>` : ''}
+            ${sDeploy.job_url ? `<a href="${sDeploy.job_url}" target="_blank" style="font-size:0.75rem; color:#3b82f6; text-decoration:none;" title="View pipeline job">#${sDeploy.job_id || ''} ↗</a>` : ''}
           </div>
         </div>
       `;
@@ -2185,7 +2185,7 @@
           ]
         },
         'runner': {
-          title: '⚙️ GitLab Runner Actions',
+          title: '⚙️ Pipeline Workflow Actions',
           items: [
             { label: '⚙️ Inspect Runner Status & Daemon Health', action: () => inspectGitLabRunnerModal() }
           ]
@@ -3480,8 +3480,8 @@
     async function inspectGitLabRunnerModal() {
       setNodesState(['node-runner'], 'working');
       openInfoModal(
-        '⚙️ GitLab Runner Status & Security Engine',
-        '<p style="color:var(--muted)">Querying dedicated GitLab Runner daemon and API...</p>',
+        '⚙️ Pipeline Workflow Status & Security Engine',
+        '<p style="color:var(--muted)">Checking local pipeline workflow status...</p>',
         'Source: GitLab CE REST API (/api/v4/runners/all)',
         'Open GitLab CE Admin Runners (Port 8929) ↗',
         'http://localhost:8929/admin/runners'

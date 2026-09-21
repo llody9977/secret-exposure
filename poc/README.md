@@ -13,7 +13,7 @@ The core is designed to run locally after downloading images and dependencies. A
 
 ## Files
 
-[Requirements](REQUIREMENTS.md) define architecture, responsibilities, records, APIs, security boundaries, operational behavior, and implementation phases.
+[Requirements](REQUIREMENTS.md) define architecture, responsibilities, records, APIs, security boundaries, and operational behavior.
 
 [Acceptance scenarios](ACCEPTANCE.md) define observable pass conditions, failure handling, and evidence requirements.
 
@@ -22,7 +22,6 @@ The core is designed to run locally after downloading images and dependencies. A
 Run `make test` and inspect its generated evidence package for the current environment. A scenario result is evidence for its declared conditions. It does not establish general scanner effectiveness, production readiness, or acceptance beyond the conditions the scenario actually tested.
 
 - Mandatory A01–A26 outcomes are recorded independently. Incomplete required checks cause a nonzero runner exit.
-- X01–X05 represent optional external adapters requiring live integration environments or authorized access. Their skips do not fail the core and do not prove that the adapters work.
 - Each run exports a content hash and per-file source hashes, including untracked source, plus correlated events, assertions, and the report. Generated secrets and runtime data are excluded from the source inventory.
 - Clean installation, full-stack restart/unseal/reset, and complete UI keyboard workflows are exercised as isolated behavioral checks. A database restart or browser login check alone cannot satisfy those complete scenarios.
 

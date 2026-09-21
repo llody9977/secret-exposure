@@ -1562,13 +1562,6 @@ class ScenarioRunner:
         for s in scenarios:
             s()
 
-        # Optional adapters X01-X05: not configured in this deployment (per review notice)
-        self.results["X01"] = "SKIPPED (live runner execution and authorization not exercised)"
-        self.results["X02"] = "SKIPPED (GitLab live runner unconfigured)"
-        self.results["X03"] = "SKIPPED (Local iTop service model instance unconfigured)"
-        self.results["X04"] = "SKIPPED (ServiceNow enterprise instance unconfigured)"
-        self.results["X05"] = "SKIPPED (External adapters unconfigured)"
-
         self.save_evidence()
 
     def save_evidence(self):
@@ -1647,15 +1640,13 @@ class ScenarioRunner:
         pass_count = sum(1 for v in self.results.values() if v == "PASS")
         fail_count = sum(1 for v in self.results.values() if v == "FAIL")
         incomplete_count = sum(1 for v in self.results.values() if v.startswith("INCOMPLETE"))
-        skip_count = sum(1 for v in self.results.values() if "SKIPPED" in v)
-
         report_md = f"""# Acceptance Test Report: {self.run_id}
 
 - **Platform:** {detected_platform}
 - **Source Revision:** `{git_sha}`
 - **Implementation snapshot SHA256:** `{self.source_snapshot["sha256"]}`
 - **Execution Window:** {self.start_time} to {datetime.now(timezone.utc).isoformat()}
-- **Summary:** {pass_count} Passed, {fail_count} Failed, {incomplete_count} Incomplete, {skip_count} Skipped (Optional external adapters)
+- **Summary:** {pass_count} Passed, {fail_count} Failed, {incomplete_count} Incomplete
 
 ## Core Scenarios (A01–A26)
 
@@ -1667,20 +1658,6 @@ class ScenarioRunner:
                 status = self.results[k]
                 report_md += f"| {k} | REQ-Core | **{status}** | assertions.json, events.jsonl |\n"
 
-        report_md += """
-## Optional Adapter Scenarios (X01–X05)
-
-| Scenario | Profile | Status | Reason / Note |
-| -------- | ------- | ------ | ------------- |
-| X01 | GitLab | SKIPPED | Live runner execution and authorization not exercised |
-| X02 | GitLab | SKIPPED | Live pipeline callback/failure behavior not exercised |
-| X03 | iTop | SKIPPED | Requires a configured live iTop instance, which may be local |
-| X04 | ServiceNow | SKIPPED | Requires authorized access to a live ServiceNow instance |
-| X05 | External Adapters | SKIPPED | Live failure, rate-limit, and pagination behavior not exercised |
-
-These optional skips are separate from core acceptance. They do not demonstrate adapter success.
-
-"""
         with open(os.path.join(target_dir, "report.md"), "w") as f:
             f.write(report_md)
 
@@ -1690,7 +1667,7 @@ These optional skips are separate from core acceptance. They do not demonstrate 
             f.write(self.run_id)
 
         print(f"\nEvidence package saved to: {target_dir}")
-        print(f"Summary: {pass_count} PASS, {fail_count} FAIL, {incomplete_count} INCOMPLETE, {skip_count} SKIPPED")
+        print(f"Summary: {pass_count} PASS, {fail_count} FAIL, {incomplete_count} INCOMPLETE")
 
 if __name__ == "__main__":
     runner = ScenarioRunner(RUN_ID)
