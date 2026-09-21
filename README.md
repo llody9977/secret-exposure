@@ -3,6 +3,7 @@
 [![Article validation](https://github.com/llody9977/secret_exposure/actions/workflows/publish.yml/badge.svg)](https://github.com/llody9977/secret_exposure/actions/workflows/publish.yml)
 [![POC validation](https://github.com/llody9977/secret_exposure/actions/workflows/poc-ci.yml/badge.svg)](https://github.com/llody9977/secret_exposure/actions/workflows/poc-ci.yml)
 [![Published guide](https://img.shields.io/badge/guide-GitHub%20Pages-222?logo=github)](https://llody9977.github.io/secret_exposure/)
+[![License](https://img.shields.io/github/license/llody9977/secret_exposure)](LICENSE)
 
 Secret Exposure is a practical guide to reducing the risk created when credentials reach the wrong place. It connects business impact, access design, detection, response, recovery, and governance.
 
@@ -33,3 +34,7 @@ The lab demonstrates one controlled path with disposable credentials. It is not 
 ## Contributing
 
 Propose corrections with a primary source where applicable. Do not submit secrets, internal incident data, or confidential documents.
+
+## License
+
+Licensed under [Apache-2.0](LICENSE). This license covers the repository's code and written material.
