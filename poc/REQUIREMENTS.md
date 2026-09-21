@@ -72,7 +72,7 @@ REQ024. Publish only the necessary local UI endpoints on 127.0.0.1. Keep databas
 
 REQ025. Provide seeded local identities for requester, approver, service owner, and responder. Generate credentials locally rather than placing reusable passwords in documentation. Session authentication and role checks must be server enforced. Record failed authorization attempts. Local lab authentication is not an enterprise SSO claim.
 
-REQ026. Deliver targets for make doctor, make bootstrap, make up, make demo-legacy, make demo-integrated, make demo-identity, make test, make evidence, make down, and make reset. These are required future commands, not currently implemented commands. Doctor must validate Docker Compose, architecture, ports, resources, and required files without dumping credentials. Reset must be confined to this Compose project and require explicit confirmation before deleting its data. Never run a global Docker prune.
+REQ026. Provide targets for make doctor, make bootstrap, make up, make demo-legacy, make demo-integrated, make demo-identity, make test, make evidence, make down, and make reset. Doctor validates Docker Compose, architecture, ports, resources, and required files without dumping credentials. Reset is confined to this Compose project and requires explicit confirmation before deleting its data. Never run a global Docker prune.
 
 REQ027. Target Linux amd64 and Docker Desktop arm64. Verify each platform or mark it unverified. Record actual peak memory, bootstrap time, and test time on tested hardware. Begin resource planning at 4 CPUs and 8 GiB available for the core, but treat this as a provisional budget to measure, not a proven minimum. Provide a separate measured budget for the optional GitLab profile and flag image emulation requirements.
 
@@ -146,7 +146,7 @@ At each phase, record changed files, exact commands run, observed results, remai
 
 ## Primary references
 
-The requirements above are proposed engineering decisions. The following sources establish relevant product mechanisms; they do not certify this unimplemented design.
+The requirements above are proposed engineering decisions. The following sources establish relevant product mechanisms; they do not certify a deployment outside the documented laboratory scope.
 
 [Vault database secrets](https://developer.hashicorp.com/vault/docs/secrets/databases) documents static and dynamic role mechanisms.
 

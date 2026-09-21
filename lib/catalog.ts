@@ -8,7 +8,7 @@ export const foundationArticles = [
   },
   {
     slug: 'action-plan',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Action',
     title: 'Where to start and who needs to own it',
     description:
@@ -16,7 +16,7 @@ export const foundationArticles = [
   },
   {
     slug: 'security-architecture',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Architecture',
     title: 'Designing for the moment a credential escapes',
     description:
@@ -24,7 +24,7 @@ export const foundationArticles = [
   },
   {
     slug: 'implementation',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Implementation',
     title: 'Why good practices become difficult to implement',
     description:
@@ -32,7 +32,7 @@ export const foundationArticles = [
   },
   {
     slug: 'incident-response',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Response',
     title: 'Responding when a secret is exposed',
     description:
@@ -40,7 +40,7 @@ export const foundationArticles = [
   },
   {
     slug: 'governance',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Governance',
     title: 'Giving GRC a clear view of credential risk',
     description:
@@ -48,7 +48,7 @@ export const foundationArticles = [
   },
   {
     slug: 'what-good-looks-like',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Assurance',
     title: 'Recognizing good control through evidence',
     description:
@@ -56,7 +56,7 @@ export const foundationArticles = [
   },
   {
     slug: 'path-forward',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Direction',
     title: 'Moving towards fewer persistent credentials',
     description:
@@ -67,7 +67,7 @@ export const foundationArticles = [
 export const technicalArticles = [
   {
     slug: 'attacker-access-paths',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Threats',
     title: 'How exposed credentials become usable access',
     description:
@@ -75,7 +75,7 @@ export const technicalArticles = [
   },
   {
     slug: 'scanner-capabilities',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Detection',
     title: 'What secret scanners detect and where coverage stops',
     description:
@@ -83,7 +83,7 @@ export const technicalArticles = [
   },
   {
     slug: 'choosing-a-scanner',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Tool selection',
     title: 'Choosing a scanner against actual requirements',
     description:
@@ -91,7 +91,7 @@ export const technicalArticles = [
   },
   {
     slug: 'pipeline-lifecycle',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Integration',
     title: 'Connecting detection to a working response',
     description:
@@ -99,7 +99,7 @@ export const technicalArticles = [
   },
   {
     slug: 'workload-identity-lab',
-    updated: '6 September 2026',
+    updated: '21 September 2026',
     topic: 'Identity',
     title: 'Replacing persistent credentials with workload identity',
     description:

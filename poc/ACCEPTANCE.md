@@ -1,6 +1,6 @@
 # Acceptance scenarios and evidence
 
-These are required future tests. None has been executed for this documentation release. Each scenario must emit a run ID, source commit, versions, preconditions, actions, UTC timestamps, assertions, redacted evidence references, result, and limitations. A skipped dependency produces SKIPPED with a reason, never PASS. Unit tests or mocks cannot replace the real service checks required below.
+These are executable acceptance tests for the implemented laboratory. Each run must emit a run ID, source commit, versions, preconditions, actions, UTC timestamps, assertions, redacted evidence references, result, and limitations. A result applies only to its recorded environment and source state. A skipped dependency produces SKIPPED with a reason, never PASS. Unit tests or mocks cannot replace the real service checks required below.
 
 ## Core acceptance matrix
 
