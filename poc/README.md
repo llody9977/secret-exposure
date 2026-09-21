@@ -2,7 +2,7 @@
 
 This directory contains the normative implementation, automated test suite, and evidence generation framework for the credential lifecycle laboratory specified in [REQUIREMENTS.md](REQUIREMENTS.md) and [ACCEPTANCE.md](ACCEPTANCE.md).
 
-Core acceptance is verified by the complete behavioral checks in [ACCEPTANCE.md](ACCEPTANCE.md). The runner reports failed and incomplete checks separately; a passing subset does not establish completion.
+The runner reports failed and incomplete checks separately. A passing subset does not establish completion, and a recorded run does not replace verification of the current runtime state or the full contractual evidence.
 
 The deliverable is a local Docker Compose lab demonstrating intake, managed provisioning, detection, authoritative record correlation, owner triage, containment, recovery, and closure across three application categories:
 - **Legacy (Static credentials):** Vault KV / static roles with supervised application process restart and database login verification.
@@ -17,14 +17,12 @@ The core is designed to run locally after downloading images and dependencies. A
 
 [Acceptance scenarios](ACCEPTANCE.md) define observable pass conditions, failure handling, and evidence requirements.
 
-[Gemini handoff](GEMINI_HANDOFF.md) provides background context and completion reporting rules.
-
 ## Completion status
 
-The current source passed a full local run on September 11, 2026: **A01–A26 PASS, 0 FAIL, 0 INCOMPLETE**. See [the acceptance report](evidence/run_20260911_123355_65d59697/report.md). Historical reports predate later changes and must not be used to assess the current implementation.
+Run `make test` and inspect its generated evidence package for the current environment. A scenario result is evidence for its declared conditions. It does not establish general scanner effectiveness, production readiness, or acceptance beyond the conditions the scenario actually tested.
 
 - Mandatory A01–A26 outcomes are recorded independently. Incomplete required checks cause a nonzero runner exit.
-- X01–X05 represent optional external enterprise adapters requiring live integration environments or authorized access. GitLab and iTop may be local; ServiceNow requires an authorized instance. Their skips do not fail the core and do not prove that the adapters work.
+- X01–X05 represent optional external adapters requiring live integration environments or authorized access. Their skips do not fail the core and do not prove that the adapters work.
 - Each run exports a content hash and per-file source hashes, including untracked source, plus correlated events, assertions, and the report. Generated secrets and runtime data are excluded from the source inventory.
 - Clean installation, full-stack restart/unseal/reset, and complete UI keyboard workflows are exercised as isolated behavioral checks. A database restart or browser login check alone cannot satisfy those complete scenarios.
 

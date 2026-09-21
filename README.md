@@ -23,9 +23,9 @@ A connected exploration of secret exposure, business risk, architecture, operati
 - [Connecting detection to a working response](content/articles/pipeline-lifecycle.md)
 - [Replacing persistent credentials with workload identity](content/articles/workload-identity-lab.md)
 
-## POC development specification
+## Credential lifecycle POC
 
-The lab is specified but not implemented. Give Gemini the [development handoff](poc/GEMINI_HANDOFF.md) together with the [requirements](poc/REQUIREMENTS.md) and [acceptance scenarios](poc/ACCEPTANCE.md). These define a Docker core with real Vault, PostgreSQL, SPIRE, and three application patterns, plus optional GitLab, iTop, and ServiceNow adapters. No lab command or acceptance result is claimed as working in this publication.
+The repository includes a local Docker Compose POC with Vault, PostgreSQL, SPIRE, and three application patterns. Its [requirements](poc/REQUIREMENTS.md), [acceptance scenarios](poc/ACCEPTANCE.md), and [laboratory guide](poc/README.md) define its behavior and evidence boundary. The POC demonstrates one declared integration path. It does not measure general scanner effectiveness or establish production readiness.
 
 ## Write and publish
 

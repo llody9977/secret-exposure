@@ -83,7 +83,7 @@ class VaultSecretIssuerAdapter(SecretIssuerAdapter):
         return resp.status_code in (200, 204)
 
     def block_workload_issuance(self, policy_name: str = "integrated-app-policy", token: str = None) -> bool:
-        """Block dynamic credential issuance at Vault for compromised workload (RECHECK-02 Finding #2)"""
+        """Block dynamic credential issuance at Vault for a compromised workload."""
         deny_policy = """
             path "database/creds/integrated-role" { capabilities = ["deny"] }
             path "sys/leases/*" { capabilities = ["deny"] }

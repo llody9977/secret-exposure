@@ -38,6 +38,6 @@ Duplicate findings should lead to the existing case rather than repeated rotatio
 
 Validation failure also needs an explicit path. A timeout is inconclusive, and unmatched ownership requires fallback routing. Neither should close the case as harmless.
 
-The [POC implementation contract](https://github.com/llody9977/secret_exposure/blob/main/poc/REQUIREMENTS.md) defines these boundaries and the [acceptance scenarios](https://github.com/llody9977/secret_exposure/blob/main/poc/ACCEPTANCE.md) define how they must be tested. They are requirements for a future working lab, not results from one already executed.
+The [POC requirements](https://github.com/llody9977/secret_exposure/blob/main/poc/REQUIREMENTS.md) define these boundaries, while its [acceptance scenarios](https://github.com/llody9977/secret_exposure/blob/main/poc/ACCEPTANCE.md) define the evidence each one needs. The implemented lab records scenario outcomes, but a result supports only the stated conditions and does not turn the workflow into proof of production readiness.
 
 The intended evidence connects intake, issuance, detection, owner decision, target verification, and healthy service behavior. A successful pipeline becomes one record within that chain rather than the definition of incident closure.

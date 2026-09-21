@@ -1053,7 +1053,7 @@ class ScenarioRunner:
             self.record_assertion("A20", "Duplicate finding accepted idempotently and references existing incident",
                                   f2.get("status") == "duplicate_accepted" and f2.get("incident_id") == f1["id"], f2)
 
-            # Concurrent execution test (REQ029, REQ034, RECHECK-02 Blocker #6)
+            # Concurrent execution test (REQ029, REQ034)
             c_evt_id = f"evt-concurrent-{uuid.uuid4().hex[:6]}"
             concurrent_candidate = self.legacy_candidate()
             def post_concurrent_finding(i):
@@ -1564,7 +1564,7 @@ class ScenarioRunner:
         target_dir = os.path.join(EVIDENCE_DIR, self.run_id)
         os.makedirs(target_dir, exist_ok=True)
 
-        # 1. Events JSONL (Strictly filtered to this run_id; NO run_default fallback per RECHECK-02 Blocker #6)
+        # 1. Events JSONL, strictly filtered to this run ID with no fallback.
         events_data = []
         try:
             ev_resp = requests.get(f"{CONTROL_URL}/api/evidence?run_id={self.run_id}", headers=self.auth_headers(TOKEN_ADMIN), timeout=5)

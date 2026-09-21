@@ -28,4 +28,4 @@ A controlled local exercise can generate a disposable credential, expose it in a
 
 The fixture must be clearly distinguished from a real incident and from a benchmark. A custom detector for the lab format proves that the integration path works for that format. It does not establish general discovery performance.
 
-The design is specified in the [POC requirements](https://github.com/llody9977/secret_exposure/blob/main/poc/REQUIREMENTS.md). Implementation and measured results remain pending. The useful outcome will be evidence connecting a known exposure route to effective containment, including the steps where information or operational authority was missing.
+The [local POC](https://github.com/llody9977/secret_exposure/blob/main/poc/README.md) implements this controlled exercise and records its scenario evidence. It demonstrates one declared route from a disposable fixture to containment and recovery. It does not measure general scanner performance or establish that every credential type and exposure surface is covered.

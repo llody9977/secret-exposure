@@ -31,7 +31,6 @@ def _resolve_source_revision() -> str:
     for git_head_path in [
         os.path.join(POC_DIR, ".git", "refs", "heads", "main"),
         os.path.join(os.path.dirname(POC_DIR), ".git", "refs", "heads", "main"),
-        os.path.join(POC_DIR, "SOURCE_REVISION"),
     ]:
         if os.path.exists(git_head_path):
             try:

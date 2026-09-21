@@ -28,6 +28,8 @@ yarn-error.log*
 
 # local environment
 .env*
+.openai/
+.serena/
 
 # deployment and generated files
 .vercel
@@ -39,3 +41,7 @@ next-env.d.ts
 
 # TypeScript incremental cache
 *.tsbuildinfo
+
+# generated POC binaries and certificate serials
+poc/apps/spiffe/bin/
+poc/certs/*.srl

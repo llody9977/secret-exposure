@@ -8,7 +8,7 @@ while [ ! -f "/spire/agent-token.txt" ] && [ ! -f "/run/spire/agent-data/keys.js
   sleep 1
 done
 
-if [ -f "/spire/agent-token.txt" ] && [ ! -f "/run/spire/agent-data/keys.json" ]; then
+if [ -f "/spire/agent-token.txt" ]; then
   TOKEN=$(cat /spire/agent-token.txt)
   rm -f /spire/agent-token.txt
   echo "Attesting SPIRE Agent with join token..."

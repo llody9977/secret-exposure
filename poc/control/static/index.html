@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enterprise Credential Lifecycle Portal</title>
+  <title>Credential Lifecycle Laboratory</title>
   <style>
     :root {
       --bg: #ffffff;
@@ -523,8 +523,8 @@
 
   <header>
     <div>
-      <h1>Enterprise Credential Lifecycle Portal <span class="badge-lab">Simulation</span></h1>
-      <p class="sub">Automated HashiCorp Vault Provisioning, GitLab CI/CD Detection & Gating, Authoritative Single Source of Truth</p>
+      <h1>Credential Lifecycle Laboratory <span class="badge-lab">Local demonstration</span></h1>
+      <p class="sub">Service context, controlled findings, containment, recovery, and evidence</p>
     </div>
     <nav role="navigation" aria-label="Main Navigation" style="display:flex; gap:0.5rem; flex-wrap:wrap;">
       <button class="btn-action" id="nav-btn-refresh" onclick="refreshAll()" tabindex="0" title="Fetch fresh state from API">↻ Refresh</button>
@@ -866,7 +866,7 @@
               <select id="m_app_cat" name="application_category">
                 <option value="integrated" selected>Integrated (Dynamic Vault Leases)</option>
                 <option value="legacy">Legacy (Static Config / Hot-Swap)</option>
-                <option value="spiffe">SPIFFE (Zero-Secret mTLS SVIDs)</option>
+                <option value="spiffe">SPIFFE (mTLS workload identity)</option>
               </select>
             </div>
             <div>
@@ -3171,7 +3171,7 @@
                 <span class="status-badge status-passed">HTTP 200 OK</span>
               </div>
               <p style="font-size:0.85rem; color:#15803d; margin:0 0 1rem 0; line-height:1.4;">
-                HashiCorp Vault successfully extended the dynamic PostgreSQL lease TTL. The application connection pool remains 100% active with zero downtime.
+                HashiCorp Vault successfully extended the dynamic PostgreSQL lease TTL. Verify application health and connection behavior separately before inferring service continuity.
               </p>
               <div style="background:#0f172a; color:#f8fafc; padding:0.9rem; border-radius:6px; font-family:monospace; font-size:0.8rem; overflow-x:auto;">
                 <div><strong>Status:</strong> ${j.status}</div>
@@ -3351,7 +3351,7 @@
               <pre style="white-space:pre-wrap; color:#15803d; font-weight:600;">${JSON.stringify(j, null, 2)}</pre>
             </div>
             <div style="margin-top:1rem; font-size:0.8rem; color:#475569;">
-              ✅ <strong>Zero Secrets Required:</strong> The client authenticated via cryptographic X.509 SVID (certificate) issued by SPIRE without any database password or API token.
+              ✅ <strong>No persistent application password for this call:</strong> The client authenticated with a SPIRE-issued X.509 SVID. The identity path still depends on attestation, issuance, trust, and target authorization.
             </div>
           `;
         } else {
@@ -3404,7 +3404,7 @@
             </div>
           </div>
           <div style="margin-top:1rem; font-size:0.8rem; color:#475569;">
-            💡 The certificate is automatically rotated in memory every hour by the SPIRE Agent. No developers ever touch private keys or certificates.
+            💡 SPIRE can renew identity material while the workload runs. Renewal behavior and operational access must be verified in the environment under test.
           </div>
         `;
         document.getElementById('info-modal-body').innerHTML = html;

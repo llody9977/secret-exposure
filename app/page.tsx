@@ -68,12 +68,12 @@ export default function Home() {
       <section className="thesis">
         <h2>A laboratory for the complete lifecycle</h2>
         <p>
-          The development specification connects Vault, service records,
-          incident handling, and three application patterns. It defines the
-          intended Docker lab and its acceptance tests. The runtime has not been
-          implemented.{' '}
-          <a href="https://github.com/llody9977/secret_exposure/blob/main/poc/GEMINI_HANDOFF.md">
-            Read the development handoff
+          The local POC connects Vault, service records, incident handling, and
+          three application patterns. It records scenario evidence for the
+          lifecycle, but it is an integration demonstration rather than a
+          scanner benchmark or a production-readiness claim.{' '}
+          <a href="https://github.com/llody9977/secret_exposure/blob/main/poc/README.md">
+            Read the laboratory guide
           </a>
           .
         </p>

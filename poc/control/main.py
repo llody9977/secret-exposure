@@ -50,7 +50,7 @@ def on_startup():
 def health():
     return {"status": "healthy", "service": "control-plane", "timestamp": datetime.now(timezone.utc).isoformat()}
 
-# --- AUTHENTICATION (REQ009, REQ025, RECHECK-02 Blocker #1) ---
+# --- AUTHENTICATION (REQ009, REQ025) ---
 
 @app.post("/api/auth/token")
 def issue_token(body: Dict[str, Any], request: Request):
@@ -167,7 +167,7 @@ def list_intakes():
 
 @app.post("/api/intakes/{id}/approve")
 def approve_intake(id: str, req: IntakeApprove, request: Request):
-    # Server-enforced authentication (REQ009, REQ025, REASSESSMENT Finding #2)
+    # Server-enforced authentication (REQ009, REQ025)
     principal = authenticate_request(request)
     if not principal.has_permission("intake:approve"):
         raise HTTPException(
@@ -204,7 +204,7 @@ def approve_intake(id: str, req: IntakeApprove, request: Request):
                                     redacted_result={"intake_id": id, "forged_actor": principal.id, "declared_approver": req.approver_id})
         raise HTTPException(status_code=403, detail="Approver identity mismatch / forgery detected")
 
-    # Genuine group-based ownership check (REQ009, RECHECK-02 Blocker #1)
+    # Genuine group-based ownership check (REQ009)
     # Principal must belong to the service owner_group or fallback_group, or have admin role
     service_owner = payload.get("owner_group", "")
     service_fallback = payload.get("fallback_group", "")
@@ -567,7 +567,7 @@ def record_decision(id: str, dec: IncidentDecision, request: Request):
     if not existing_op:
         op_id = f"op-{uuid.uuid4().hex[:8]}"
 
-        # Resolve immutable lease and target metadata from the matched issued version (REASSESSMENT Finding #4)
+        # Resolve immutable lease and target metadata from the matched issued version.
         op_params = {}
         if dec.action.value == "revoke":
             c_ver_id = incident.get("credential_version_id")
@@ -617,7 +617,7 @@ def validate_and_close_incident(
     run_id: str = "run_default"
 ) -> Dict[str, Any]:
     """
-    Single unified validator and closure function across all entry points (RECHECK-02 Blocker #5).
+    Single unified validator and closure function across all entry points.
     Enforces that containment is verified or genuine not_applicable with approved exception,
     and requires all four mandatory closure fields. Does not forge verified status.
     """
@@ -639,7 +639,7 @@ def validate_and_close_incident(
         conn.close()
         raise HTTPException(status_code=409, detail="Incident revision conflict")
 
-    # PRECONDITIONS FOR CLOSURE (REQ031, REQ033, Scenario A18, RECHECK-02 Blocker #5):
+    # Preconditions for closure (REQ031, REQ033, Scenario A18).
     # 1. Containment must be verified, or not_applicable with approved evidence
     c_status = incident.get("containment_status")
     if c_status != "verified":
@@ -668,7 +668,7 @@ def validate_and_close_incident(
         conn.close()
         raise HTTPException(status_code=422, detail="Cannot close incident: missing recurrence owner")
 
-    # Recovery status must be healthy, or accepted_risk for approved exceptions (RECHECK-02 Blocker #5)
+    # Recovery status must be healthy, or accepted_risk for approved exceptions.
     r_status = incident.get("recovery_status")
     if r_status not in ("healthy", "degraded"):
         # Degraded recovery is closable only with an explicit human disposition.

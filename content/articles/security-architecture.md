@@ -12,7 +12,9 @@ Suppose several services use the same database identity because it was convenien
 
 Separate workload identities reduce that coupling. Permissions can reflect each service's purpose, and stopping one identity need not interrupt unrelated consumers. The separation still has to be reflected in effective policy. Different identity names achieve little if each receives the same broad access.
 
-Kubernetes provides a useful example of why configuration needs closer examination than the object name. Base64 encoding does not provide confidentiality. The official guidance calls for encryption at rest, restricted access to Secret objects, and protection after an application reads the value. Actual cluster settings, including managed service configuration, determine whether those protections are present. [Kubernetes guidance](https://kubernetes.io/docs/concepts/security/secrets-good-practices/).
+Kubernetes makes the same problem visible. A Secret can distribute one database password to several Pods. The result is still one shared database identity, even when those Pods belong to different services. Encryption at rest and restricted access can protect the Secret object, but they do not separate the authority used after each workload receives the value.
+
+Each workload needs its own identity and permissions at the target. That makes an exposure easier to trace and lets one compromised workload be contained without interrupting unrelated services. Kubernetes configuration still matters because Base64 encoding does not provide confidentiality. The cluster needs encryption at rest, restricted access to Secret objects, and protection after an application reads the value. [Kubernetes guidance](https://kubernetes.io/docs/concepts/security/secrets-good-practices/).
 
 ## Temporary access depends on a sound trust policy
 

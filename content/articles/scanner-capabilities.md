@@ -28,4 +28,4 @@ A representative evaluation should include expected credential families, file fo
 
 Known fixtures make regression testing possible. They do not establish how many unknown credentials exist in the estate. An evaluation should retain its tool version, configuration, input scope, and limitations with the reported result.
 
-The same distinction applies to the planned lab. Its custom fixture will exercise the route from detection to response. Scanner quality across realistic unknown inputs would require a separate evaluation. Keeping those purposes separate prevents an integration demonstration from becoming an unsupported product ranking.
+The same distinction applies to the local POC. Its custom fixture exercises one route from detection to response. Scanner quality across realistic unknown inputs requires a separate evaluation. Keeping those purposes separate prevents an integration demonstration from becoming an unsupported product ranking.

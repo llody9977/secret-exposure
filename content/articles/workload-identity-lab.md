@@ -8,7 +8,7 @@ The useful claim is therefore specific. A selected connection no longer depends 
 
 ## A valid identity is not permission to do everything
 
-The proposed lab uses a caller and a protected API. Mutual TLS establishes their identities, while an authorization policy allows the expected caller to perform one harmless operation and denies a different identity or forbidden operation.
+The local lab uses a caller and a protected API. Mutual TLS establishes their identities, while an authorization policy allows the expected caller to perform one harmless operation and denies a different identity or forbidden operation.
 
 This separation matters because an authenticated workload can still have excessive permissions. A demonstration that only proves successful authentication would leave the central access decision untested.
 
@@ -28,4 +28,4 @@ A legacy application may require a configuration update and restart. An integrat
 
 All three can still use the same service records, owners, classifications, incident decisions, and evidence requirements. Their differences belong in the approved containment and recovery procedures. A common dashboard should preserve those differences rather than describe every action as rotation.
 
-The [lab specification](https://github.com/llody9977/secret_exposure/blob/main/poc/REQUIREMENTS.md) requires real SPIRE issuance, renewal, and authorization tests alongside the two Vault paths. The implementation is pending. Completion will require evidence that the intended identity works, unintended access fails, and a compromised workload can be contained under the declared test conditions.
+The [implemented lab](https://github.com/llody9977/secret_exposure/blob/main/poc/README.md) includes SPIRE issuance, renewal, and authorization checks alongside the two Vault paths. Each result still needs to show that the intended identity works, unintended access fails, and a compromised workload can be contained under the declared test conditions. A recorded demonstration does not establish that every workload or target behaves the same way.
