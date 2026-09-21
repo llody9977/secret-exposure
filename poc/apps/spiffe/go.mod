@@ -2,7 +2,7 @@ module spiffe-lab
 
 go 1.25.0
 
-require github.com/spiffe/go-spiffe/v2 v2.7.0
+require github.com/spiffe/go-spiffe/v2 v2.8.1
 
 require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
