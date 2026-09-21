@@ -40,8 +40,14 @@ def get(ref, actor, run_id, operation_id=None):
         raise ValueError('Missing or invalid candidate reference')
     status = 'inconclusive'
     try:
-        path = ROOT / (ref + '.json')
-        data = json.loads(path.read_text())
+        root = ROOT.resolve()
+        path = (root / f'{ref}.json').resolve(strict=False)
+        if path.parent != root:
+            raise ValueError('Missing or invalid candidate reference')
+        flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0)
+        descriptor = os.open(path, flags)
+        with os.fdopen(descriptor) as candidate_file:
+            data = json.load(candidate_file)
         if data['expires_at'] <= time.time():
             path.unlink(missing_ok=True)
             raise ValueError('Candidate reference expired; capture authorized evidence again')

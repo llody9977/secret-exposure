@@ -5,6 +5,7 @@ import json
 import time
 import subprocess
 import requests
+from html import escape
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List, Dict, Any
 
@@ -1347,9 +1348,10 @@ def gitlab_approve_pipeline(id: str, request: Request):
         deploy_job_id = stages[2]["job_id"]
 
     # 2. Trigger native GitLab job play API on the SAME pipeline
-    play_res = {}
+    job_played = False
     if deploy_job_id:
-        play_res = gitlab_sim.play_manual_job(deploy_job_id)
+        gitlab_sim.play_manual_job(deploy_job_id)
+        job_played = True
 
     # 3. Update pipeline DB status to approved / running
     if len(stages) >= 3:
@@ -1366,7 +1368,7 @@ def gitlab_approve_pipeline(id: str, request: Request):
         "status": "approved_and_played",
         "pipeline_id": id,
         "job_id": deploy_job_id,
-        "play_response": play_res,
+        "job_played": job_played,
         "incident_id": incident_id,
         "validation_status": val_status,
         "message": f"Pipeline #{id} allowed to proceed! Deploy job #{deploy_job_id} unblocked and executing in the SAME pipeline."
@@ -1422,9 +1424,10 @@ def gitlab_allow_unrotated_pipeline(id: str, request: Request):
     if len(stages) >= 3 and stages[2].get("job_id"):
         deploy_job_id = stages[2]["job_id"]
 
-    play_res = {}
+    job_played = False
     if deploy_job_id:
-        play_res = gitlab_sim.play_manual_job(deploy_job_id)
+        gitlab_sim.play_manual_job(deploy_job_id)
+        job_played = True
 
     if len(stages) >= 3:
         stages[1]["status"] = "allowed_unrotated"
@@ -1440,7 +1443,7 @@ def gitlab_allow_unrotated_pipeline(id: str, request: Request):
         "status": "allowed_and_played",
         "pipeline_id": id,
         "job_id": deploy_job_id,
-        "play_response": play_res,
+        "job_played": job_played,
         "incident_id": incident_id,
         "message": f"Pipeline #{id} allowed without rotation (risk accepted). Deploy job #{deploy_job_id} unblocked in SAME pipeline."
     }
@@ -1497,9 +1500,10 @@ def gitlab_rotate_and_deploy_pipeline(id: str, request: Request):
     if len(stages) >= 3 and stages[2].get("job_id"):
         deploy_job_id = stages[2]["job_id"]
 
-    play_res = {}
+    job_played = False
     if deploy_job_id:
-        play_res = gitlab_sim.play_manual_job(deploy_job_id)
+        gitlab_sim.play_manual_job(deploy_job_id)
+        job_played = True
 
     if len(stages) >= 3:
         stages[1]["status"] = "mitigated_rotated"
@@ -1515,7 +1519,7 @@ def gitlab_rotate_and_deploy_pipeline(id: str, request: Request):
         "status": "rotated_and_played",
         "pipeline_id": id,
         "job_id": deploy_job_id,
-        "play_response": play_res,
+        "job_played": job_played,
         "incident_id": incident_id,
         "operation_id": op_id,
         "containment": exec_res.get("containment"),
@@ -1560,13 +1564,9 @@ def gitlab_remediate_git_endpoint(id: str, req: Optional[Dict[str, Any]] = None)
         "status": "git_remediated_and_unblocked",
         "action": action,
         "pipeline_id": id,
-        "new_pipeline_id": git_res.get("new_pipeline_id"),
-        "new_pipeline_iid": git_res.get("new_pipeline_iid"),
-        "new_pipeline_url": git_res.get("new_pipeline_url"),
-        "new_commit_sha": git_res.get("new_commit_sha"),
         "validation_status": val_status,
-        "git_remediation": git_res,
-        "message": f"SecOps Bot pushed clean commit to GitLab. Fresh pipeline #{git_res.get('new_pipeline_id')} running in GitLab!"
+        "remediation_started": bool(git_res),
+        "message": "Git remediation completed and a fresh pipeline is running in GitLab."
     }
 
 from fastapi.responses import HTMLResponse
@@ -1579,12 +1579,16 @@ def gitlab_web_ui(project: str = "svc-legacy"):
     pipe_rows = ""
     for p in pipelines:
         status_color = "#15803d" if p["status"] == "passed" else "#b91c1c"
+        stage_cells = " ".join(
+            f"<span style='background:#f8fafc; border:1px solid #e2e8f0; padding:2px 6px; border-radius:4px;'>{escape(str(s['name']))}: {escape(str(s['status']))}</span>"
+            for s in p['stages']
+        )
         pipe_rows += f"""<tr>
-            <td><code>{p['id']}</code></td>
-            <td><strong>{p['project_id']}</strong></td>
-            <td><code>{p['commit_sha'][:8]}</code></td>
-            <td><span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; font-weight:700; color:{status_color};">{p['status'].upper()}</span></td>
-            <td>{' '.join([f"<span style='background:#f8fafc; border:1px solid #e2e8f0; padding:2px 6px; border-radius:4px;'>{s['name']}: {s['status']}</span>" for s in p['stages']])}</td>
+            <td><code>{escape(str(p['id']))}</code></td>
+            <td><strong>{escape(str(p['project_id']))}</strong></td>
+            <td><code>{escape(str(p['commit_sha'])[:8])}</code></td>
+            <td><span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; font-weight:700; color:{status_color};">{escape(str(p['status']).upper())}</span></td>
+            <td>{stage_cells}</td>
         </tr>"""
     if not pipe_rows:
         pipe_rows = '<tr><td colspan="5" style="color:#64748b; text-align:center; padding:1.5rem;">No active pipeline executions. Push a commit from the portal to trigger.</td></tr>'
@@ -1622,7 +1626,7 @@ def gitlab_web_ui(project: str = "svc-legacy"):
   <div class="card">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <div>
-        <h2 style="margin:0; font-size:1.15rem;">Project: <code>platform/{project}</code></h2>
+        <h2 style="margin:0; font-size:1.15rem;">Project: <code>platform/{escape(project)}</code></h2>
         <p style="margin:0.25rem 0 0 0; color:#64748b; font-size:0.85rem;">Continuous Integration, Gitleaks Security Gating & Automated Revocation Pipeline</p>
       </div>
       <div style="display:flex; gap:0.5rem;">
@@ -1645,7 +1649,7 @@ def gitlab_web_ui(project: str = "svc-legacy"):
     <h3 style="margin-top:0;">Credentials & Access Metadata</h3>
     <ul>
       <li><strong>Web Login:</strong> Active session granted for <code>secops_auditor</code> / <code>gitlab_runner_secops</code></li>
-      <li><strong>Repository URL:</strong> <code>http://localhost:8000/gitlab/platform/{project}</code></li>
+      <li><strong>Repository URL:</strong> <code>http://localhost:8000/gitlab/platform/{escape(project)}</code></li>
       <li><strong>Webhook / API Push Endpoint:</strong> <code>POST http://localhost:8000/api/gitlab/push</code></li>
       <li><strong>Security Analyzer Engine:</strong> <code>Gitleaks v8.24.0 (Pre-Receive & CI Runner Diff Hook)</code></li>
     </ul>
@@ -1657,7 +1661,7 @@ def gitlab_web_ui(project: str = "svc-legacy"):
         method: 'POST',
         headers: {{ 'Content-Type': 'application/json' }},
         body: JSON.stringify({{
-          project_id: '{project}',
+          project_id: {json.dumps(project)},
           diff_content: withLeak ? 'diff --git a/app.py b/app.py\\n+DB_SECRET = "LAB_SEC_EXP_TEST123"\\n' : 'diff --git a/app.py b/app.py\\n+# clean update\\n'
         }})
       }});
@@ -1715,8 +1719,8 @@ def proxy_spiffe_call():
     try:
         r = requests.get("http://lab-spiffe-caller:8003/call", timeout=5)
         return Response(content=r.content, status_code=r.status_code, media_type="application/json")
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Failed to communicate with lab-spiffe-caller: {e}")
+    except requests.RequestException:
+        raise HTTPException(status_code=502, detail="Failed to communicate with lab-spiffe-caller")
 
 @app.get("/api/spiffe/call_forbidden")
 def proxy_spiffe_call_forbidden():
@@ -1724,8 +1728,8 @@ def proxy_spiffe_call_forbidden():
     try:
         r = requests.get("http://lab-spiffe-caller:8003/call_forbidden", timeout=5)
         return Response(content=r.content, status_code=r.status_code, media_type="text/plain")
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Failed to communicate with lab-spiffe-caller: {e}")
+    except requests.RequestException:
+        raise HTTPException(status_code=502, detail="Failed to communicate with lab-spiffe-caller")
 
 @app.get("/api/spiffe/svid_info")
 def proxy_spiffe_svid_info():
@@ -1733,8 +1737,8 @@ def proxy_spiffe_svid_info():
     try:
         r = requests.get("http://lab-spiffe-caller:8003/svid_info", timeout=5)
         return Response(content=r.content, status_code=r.status_code, media_type="application/json")
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Failed to communicate with lab-spiffe-caller: {e}")
+    except requests.RequestException:
+        raise HTTPException(status_code=502, detail="Failed to communicate with lab-spiffe-caller")
 
 # --- APPLICATION HEALTH PROXY ENDPOINTS ---
 @app.get("/api/apps/legacy/health")
@@ -1743,8 +1747,8 @@ def proxy_legacy_health():
     try:
         r = requests.get("http://lab-legacy-app:8001/health", timeout=5)
         return Response(content=r.content, status_code=r.status_code, media_type="application/json")
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Failed to communicate with lab-legacy-app: {e}")
+    except requests.RequestException:
+        raise HTTPException(status_code=502, detail="Failed to communicate with lab-legacy-app")
 
 @app.get("/api/apps/integrated/health")
 def proxy_integrated_health():
@@ -1752,8 +1756,8 @@ def proxy_integrated_health():
     try:
         r = requests.get("http://lab-integrated-app:8002/health", timeout=5)
         return Response(content=r.content, status_code=r.status_code, media_type="application/json")
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Failed to communicate with lab-integrated-app: {e}")
+    except requests.RequestException:
+        raise HTTPException(status_code=502, detail="Failed to communicate with lab-integrated-app")
 
 @app.post("/api/apps/integrated/renew")
 def proxy_integrated_renew():
@@ -1761,8 +1765,8 @@ def proxy_integrated_renew():
     try:
         r = requests.post("http://lab-integrated-app:8002/renew", timeout=5)
         return Response(content=r.content, status_code=r.status_code, media_type="application/json")
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Failed to communicate with lab-integrated-app: {e}")
+    except requests.RequestException:
+        raise HTTPException(status_code=502, detail="Failed to communicate with lab-integrated-app")
 
 # /api/lab/access REMOVED — exposed bootstrap credentials without authentication (ASSESSMENT Finding #2)
 
@@ -1796,10 +1800,9 @@ def get_gitlab_runner_status():
                 "all_runners": runners,
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
-        else:
-            return {"status": "error", "error": f"GitLab returned HTTP {r.status_code}", "detail": r.text}
-    except Exception as e:
-        return {"status": "error", "error": str(e)}
+        return {"status": "error", "error": "GitLab runner status is unavailable"}
+    except requests.RequestException:
+        return {"status": "error", "error": "GitLab runner status is unavailable"}
 
 # --- STATIC UI ---
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
