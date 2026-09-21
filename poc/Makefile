@@ -15,7 +15,7 @@ build-image:
 build-bins:
 	@echo "Building Linux SPIFFE binaries for the Docker engine architecture..."
 	@mkdir -p apps/spiffe/bin
-	@docker run --rm -v "$$(pwd)/apps/spiffe:/src" -w /src golang:1.24.6-bookworm sh -ec 'CGO_ENABLED=0 GOOS=linux go build -mod=readonly -o bin/spiffe-caller ./caller; CGO_ENABLED=0 GOOS=linux go build -mod=readonly -o bin/spiffe-service ./service'
+	@docker run --rm -v "$$(pwd)/apps/spiffe:/src" -w /src golang:1.25.0-bookworm sh -ec 'CGO_ENABLED=0 GOOS=linux go build -mod=readonly -o bin/spiffe-caller ./caller; CGO_ENABLED=0 GOOS=linux go build -mod=readonly -o bin/spiffe-service ./service'
 
 browser-setup:
 	@$(PYTHON) -m pip install playwright==1.51.0
