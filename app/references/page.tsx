@@ -84,7 +84,7 @@ export default function References() {
           </p>
           <h2>Review before implementation</h2>
           <p>
-            The sources were checked on 5 September 2026. Product behavior can
+            The sources were checked on 21 September 2026. Product behavior can
             change, so implementation needs to be checked against current
             documentation.
           </p>
