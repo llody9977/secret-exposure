@@ -1,13 +1,13 @@
 # Secret Exposure
 
-[![Article validation](https://github.com/llody9977/secret_exposure/actions/workflows/publish.yml/badge.svg)](https://github.com/llody9977/secret_exposure/actions/workflows/publish.yml)
-[![POC validation](https://github.com/llody9977/secret_exposure/actions/workflows/poc-ci.yml/badge.svg)](https://github.com/llody9977/secret_exposure/actions/workflows/poc-ci.yml)
-[![Published guide](https://img.shields.io/badge/guide-GitHub%20Pages-222?logo=github)](https://llody9977.github.io/secret_exposure/)
-[![License](https://img.shields.io/github/license/llody9977/secret_exposure)](LICENSE)
+[![Article validation](https://github.com/llody9977/secret-exposure/actions/workflows/publish.yml/badge.svg)](https://github.com/llody9977/secret-exposure/actions/workflows/publish.yml)
+[![POC validation](https://github.com/llody9977/secret-exposure/actions/workflows/poc-ci.yml/badge.svg)](https://github.com/llody9977/secret-exposure/actions/workflows/poc-ci.yml)
+[![Published guide](https://img.shields.io/badge/guide-GitHub%20Pages-222?logo=github)](https://llody9977.github.io/secret-exposure/)
+[![License](https://img.shields.io/github/license/llody9977/secret-exposure)](LICENSE)
 
 Secret Exposure is a practical guide to reducing the risk created when credentials reach the wrong place. It connects business impact, access design, detection, response, recovery, and governance.
 
-Read the published guide at [llody9977.github.io/secret_exposure](https://llody9977.github.io/secret_exposure/).
+Read the published guide at [llody9977.github.io/secret-exposure](https://llody9977.github.io/secret-exposure/).
 
 ## Articles
 

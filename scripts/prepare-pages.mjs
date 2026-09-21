@@ -1,6 +1,6 @@
 import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-const base = process.env.SITE_BASE_PATH ?? '/secret_exposure';
+const base = process.env.SITE_BASE_PATH ?? '/secret-exposure';
 if (base && !/^\/[a-zA-Z0-9_-]+$/.test(base))
   throw new Error('Use an empty base path or one repository path segment');
 const source = join('dist/client', base);

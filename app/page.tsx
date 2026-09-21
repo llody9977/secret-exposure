@@ -72,7 +72,7 @@ export default function Home() {
           three application patterns. It records scenario evidence for the
           lifecycle, but it is an integration demonstration rather than a
           scanner benchmark or a production-readiness claim.{' '}
-          <a href="https://github.com/llody9977/secret_exposure/blob/main/poc/README.md">
+          <a href="https://github.com/llody9977/secret-exposure/blob/main/poc/README.md">
             Read the laboratory guide
           </a>
           .

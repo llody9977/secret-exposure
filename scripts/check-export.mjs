@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import assert from 'node:assert/strict';
 const root = 'out';
-const base = process.env.SITE_BASE_PATH ?? '/secret_exposure';
+const base = process.env.SITE_BASE_PATH ?? '/secret-exposure';
 const walk = (dir) =>
   readdirSync(dir).flatMap((f) =>
     statSync(join(dir, f)).isDirectory() ? walk(join(dir, f)) : [join(dir, f)],

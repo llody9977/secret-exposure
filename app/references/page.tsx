@@ -95,7 +95,7 @@ export default function References() {
           </p>
           <p>
             Corrections and proposed changes can be raised in the{' '}
-            <a href="https://github.com/llody9977/secret_exposure/issues">
+            <a href="https://github.com/llody9977/secret-exposure/issues">
               repository
             </a>
             , together with supporting evidence. Live credentials do not belong
