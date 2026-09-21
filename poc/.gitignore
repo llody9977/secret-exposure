@@ -1,0 +1,21 @@
+# Lab transient and sensitive material
+.bootstrap/
+.vault-data/
+.postgres-data/
+.spire-data/
+fixtures/
+evidence/
+*.key
+*.token
+*.hcl.rendered
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# lab local noise
+.DS_Store
+*.bak
+.env
+
+.env.backup-*

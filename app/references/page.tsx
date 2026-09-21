@@ -1,106 +1,105 @@
 import type { Metadata } from 'next';
 import { path } from '@/lib/site';
 export const metadata: Metadata = {
-  title: 'References and editorial approach',
+  title: 'References and evidence',
   description:
-    'Primary sources, evidence boundaries, and editorial principles behind the Secret Exposure articles.',
+    'Primary sources and evidence boundaries for secret exposure guidance.',
   alternates: { canonical: path('/references/') },
 };
 const sources = [
   [
-    'OWASP — Secrets Management Cheat Sheet',
+    'OWASP Secrets Management Cheat Sheet',
     'https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html',
-    'Lifecycle guidance. Used for the distinction between finding a secret and managing its creation, use, and retirement.',
+    'Secret management spans creation, use, and retirement as well as discovery.',
   ],
   [
-    'GitHub — Secret scanning detection scope',
+    'GitHub secret scanning detection scope',
     'https://docs.github.com/en/code-security/reference/secret-security/secret-scanning-scope',
-    'Product coverage and limitations. Supports the distinction between push protection and background detection.',
+    'Documented coverage distinguishes push protection from background detection.',
   ],
   [
-    'GitHub — OpenID Connect',
+    'GitHub OpenID Connect',
     'https://docs.github.com/en/actions/concepts/security/openid-connect',
-    'How workflow identity can be exchanged for temporary provider access, with explicit trust conditions.',
+    'This explains the exchange of workflow identity for temporary provider access and the trust conditions behind it.',
   ],
   [
-    'AWS — Security best practices in IAM',
+    'AWS security best practices in IAM',
     'https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html',
-    'Provider guidance on temporary workload credentials and least-privilege access.',
+    'Provider guidance covers temporary workload credentials and permissions appropriate to the task.',
   ],
   [
-    'Kubernetes — Good practices for Secrets',
+    'Kubernetes good practices for Secrets',
     'https://kubernetes.io/docs/concepts/security/secrets-good-practices/',
-    'Storage, access, and runtime boundaries. Base64 is encoding, not encryption.',
+    'Storage, retrieval, and runtime protection have distinct boundaries. Base64 encoding does not provide confidentiality.',
   ],
   [
-    'GitHub — Remediating a leaked secret',
+    'GitHub guidance on remediating a leaked secret',
     'https://docs.github.com/en/code-security/tutorials/remediate-leaked-secrets/remediating-a-leaked-secret',
-    'Operational sequencing for replacement and revocation when availability matters.',
+    'Replacement and revocation need sequencing that accounts for both exposure and availability.',
   ],
   [
-    'GitHub — Removing sensitive data from a repository',
+    'GitHub guidance on removing sensitive data',
     'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository',
-    'Revocation before cleanup, and the limits and disruption of repository history removal.',
+    'Revocation takes priority over cleanup. Removing repository history also has operational and coverage limits.',
   ],
   [
-    'GitHub advisory — CVE-2025-30066',
+    'GitHub advisory for CVE-2025-30066',
     'https://github.com/advisories/GHSA-mrrh-fwg8-r2c3',
-    'March 2025 workflow compromise. Used to illustrate runtime-to-log exposure, without equating adoption with confirmed credential loss.',
+    'The March 2025 compromise exposed secrets through workflow logs. Use of the action does not establish confirmed credential loss.',
   ],
   [
-    'CircleCI — January 2023 incident report',
+    'CircleCI January 2023 incident report',
     'https://circleci.com/blog/jan-4-2023-incident-report/',
-    'First-party historical incident evidence showing why response extends to credentials and connected systems.',
+    'The provider report documents response extending to credentials and connected systems.',
   ],
   [
-    'NIST — Cybersecurity Framework 2.0',
+    'NIST Cybersecurity Framework 2.0',
     'https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20',
-    'An outcome-oriented framework for risk communication. The series does not claim NIST prescribes its capability profile or roadmap.',
+    'The framework organizes risk outcomes. It does not prescribe the capability profile or planning sequence used here.',
   ],
 ];
 export default function References() {
   return (
     <main id="main" className="references">
-      <p className="eyebrow">Evidence and method</p>
+      <p className="eyebrow">Primary sources</p>
       <h1>References.</h1>
       <div className="reference-grid">
         <div className="prose">
-          <h2 id="editorial-approach">Editorial approach</h2>
+          <h2 id="editorial-approach">Evidence and interpretation</h2>
           <p>
-            Lead with the decision and its business consequence. Explain
-            technical mechanisms where they change that decision. Keep the
-            writing direct, practical, and free of unsupported claims.
+            Technical claims link to their supporting sources. Hypothetical
+            examples and proposed operating approaches remain distinct from
+            documented incidents and external requirements.
           </p>
           <p>
-            Primary-source facts are linked where they appear. Proposed
-            operating practices, the capability profile, and the 90-day sequence
-            are editorial recommendations. They are not universal standards or
-            regulatory requirements.
+            An incident establishes a particular failure path. It does not
+            establish how often that path occurs elsewhere or the loss every
+            organization should expect. Limitations that affect a conclusion
+            remain beside it.
           </p>
           <p>
-            Examples are labelled as illustrative. A documented incident
-            establishes a particular failure path; it does not establish how
-            often that path occurs or the loss every organisation should expect.
+            The capability profile and 90 day planning sequence are proposed
+            aids for assessment and delivery. They are not universal maturity
+            standards or regulatory requirements.
+          </p>
+          <h2>Review before implementation</h2>
+          <p>
+            The sources were checked on 21 September 2026. Product behavior can
+            change, so implementation needs to be checked against current
+            documentation.
           </p>
           <p>
-            Caveats that change a claim stay beside it. Source context and
-            method belong here. Sources were checked on 5 September 2026;
-            product behaviour should be rechecked before implementation.
-          </p>
-          <h2>Scope</h2>
-          <p>
-            The series covers credentials and key material across development,
-            delivery, runtime, and operational workflows. Detailed cryptographic
-            key recovery, product comparisons, and entity-specific regulatory
-            mappings require separate treatment.
+            Regulatory claims need an assessment of the requirements applicable
+            to the particular entity and service. Detailed cryptographic
+            recovery and supplier limitations also need their own assessment.
           </p>
           <p>
-            Corrections and article proposals can be raised in the{' '}
+            Corrections and proposed changes can be raised in the{' '}
             <a href="https://github.com/llody9977/secret_exposure/issues">
               repository
             </a>
-            . Include the claim, supporting evidence, and the change proposed.
-            Never include a live credential.
+            , together with supporting evidence. Live credentials do not belong
+            in those records.
           </p>
         </div>
         <ol className="reference-list">

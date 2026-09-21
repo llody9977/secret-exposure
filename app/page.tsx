@@ -1,4 +1,4 @@
-import { articles } from '@/lib/catalog';
+import { foundationArticles, technicalArticles } from '@/lib/catalog';
 import { path } from '@/lib/site';
 export default function Home() {
   return (
@@ -9,37 +9,50 @@ export default function Home() {
         </p>
         <h1>Secret exposure.</h1>
         <p className="standfirst">
-          Understand the risk.
+          Understanding the risk.
           <br />
-          Design for less of it.
+          Making the response work.
         </p>
         <p className="intro-copy">
-          Practical articles on the credentials that connect your business: why
-          exposure matters, what to change, and how to know your controls work.
+          An exposed credential can connect a small technical finding to a
+          significant business consequence. The response depends on its
+          authority and the service behind it.
         </p>
       </section>
-      <section className="series" aria-labelledby="series-title">
-        <div className="section-heading">
-          <h2 id="series-title">The articles</h2>
-          <p>Read in sequence, or start with the decision in front of you.</p>
-        </div>
-        <div className="article-grid">
-          {articles.map((a) => (
-            <a
-              className="article-card"
-              key={a.slug}
-              href={path(`/articles/${a.slug}/`)}
-            >
-              <span className="eyebrow">{a.topic}</span>
-              <h3>{a.title}</h3>
-              <p>{a.description}</p>
-              <span className="read-link">
-                Read article <span aria-hidden="true">↗</span>
-              </span>
-            </a>
-          ))}
-        </div>
-      </section>
+      {[
+        {
+          id: 'foundations',
+          title: 'Foundations',
+          articles: foundationArticles,
+        },
+        {
+          id: 'technical-practice',
+          title: 'Technical practice',
+          articles: technicalArticles,
+        },
+      ].map((series) => (
+        <section key={series.id} className="series" aria-labelledby={series.id}>
+          <div className="section-heading">
+            <h2 id={series.id}>{series.title}</h2>
+          </div>
+          <div className="article-grid">
+            {series.articles.map((a) => (
+              <a
+                className="article-card"
+                key={a.slug}
+                href={path(`/articles/${a.slug}/`)}
+              >
+                <span className="eyebrow">{a.topic}</span>
+                <h3>{a.title}</h3>
+                <p>{a.description}</p>
+                <span className="read-link">
+                  Read article <span aria-hidden="true">↗</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
       <section className="thesis">
         <h2>
           Scanning is a sensor.
@@ -47,9 +60,22 @@ export default function Home() {
           Risk reduction takes more.
         </h2>
         <p>
-          Prevent avoidable exposure. Limit what a credential can do. Detect
-          what escapes. Revoke access, investigate its use, and remove the
-          conditions that let the same failure happen again.
+          Finding a credential is the beginning. Its authority needs to be
+          understood, exposed access needs to be stopped, and the cause needs to
+          be addressed so the same exposure does not keep happening.
+        </p>
+      </section>
+      <section className="thesis">
+        <h2>A laboratory for the complete lifecycle</h2>
+        <p>
+          The local POC connects Vault, service records, incident handling, and
+          three application patterns. It records scenario evidence for the
+          lifecycle, but it is an integration demonstration rather than a
+          scanner benchmark or a production-readiness claim.{' '}
+          <a href="https://github.com/llody9977/secret_exposure/blob/main/poc/README.md">
+            Read the laboratory guide
+          </a>
+          .
         </p>
       </section>
     </main>

@@ -1,41 +1,51 @@
-## Design the authority before the storage
+## The design needs to account for access after retrieval
 
-A security architecture should explain what happens when a credential escapes. Storage is one part of that answer. The rest depends on what can use the credential, which actions it authorises, how long it works, and how access can be withdrawn.
+A secret manager can protect a credential in storage and control who retrieves it. Once a workload receives the value, the workload and its execution environment become part of the protection boundary. Code running there may be able to use the access even if the credential never appears in source control.
 
-Start with a trust-boundary diagram that follows a workload from build to production. Identify the issuer, the process receiving access, the target service, and the evidence store. At each boundary ask whether the receiver needs the credential itself or only the ability to perform a narrow operation. A deployment job may need permission to release one service; it rarely needs an unrestricted administration identity.
+That changes the architecture question. Where a secret is stored matters, but so do the permissions it carries, the processes that receive it, and the conditions under which the target accepts it. A deployment job that needs to release one service does not automatically need authority to administer the whole environment.
 
-## A vault does not protect every use
+Following the path from issuer to workload to target makes those decisions visible. It also exposes where responsibility changes hands. The platform may govern retrieval while the application controls what happens to the value afterwards. Protection needs to continue across that handoff.
 
-A secret manager can control storage and retrieval. Once a process retrieves a value, that process and its execution environment become part of the protection boundary. A compromised application can misuse the access it legitimately holds, even if the secret was never committed to source control.
+## Shared credentials make containment harder
 
-Avoid distributing a shared identity to unrelated applications. Give each workload a distinct identity and scope it to the target resources and operations it needs. Separation improves both containment and attribution: revoking one consumer should not require guessing which other services depend on its key.
+Suppose several services use the same database identity because it was convenient during an early deployment. Access records may identify that shared account without establishing which service made a request. Replacing the credential also becomes a coordinated change across consumers that may reload configuration differently.
 
-For Kubernetes, base64 encoding does not provide confidentiality. The official guidance calls for encryption at rest and restricted access to Secret objects, and warns applications to protect values after reading them. Verify the actual cluster configuration, including managed-service settings, rather than assuming the object name guarantees protection. [Kubernetes guidance](https://kubernetes.io/docs/concepts/security/secrets-good-practices/).
+Separate workload identities reduce that coupling. Permissions can reflect each service's purpose, and stopping one identity need not interrupt unrelated consumers. The separation still has to be reflected in effective policy. Different identity names achieve little if each receives the same broad access.
 
-## Choose the credential pattern deliberately
+Kubernetes makes the same problem visible. A Secret can distribute one database password to several Pods. The result is still one shared database identity, even when those Pods belong to different services. Encryption at rest and restricted access can protect the Secret object, but they do not separate the authority used after each workload receives the value.
 
-Prefer a platform-provided workload identity where the target supports it. AWS, for example, recommends temporary credentials through IAM roles for workloads. This reduces reliance on manually distributed long-term keys; permissions still need to be scoped. [AWS IAM guidance](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
+Each workload needs its own identity and permissions at the target. That makes an exposure easier to trace and lets one compromised workload be contained without interrupting unrelated services. Kubernetes configuration still matters because Base64 encoding does not provide confidentiality. The cluster needs encryption at rest, restricted access to Secret objects, and protection after an application reads the value. [Kubernetes guidance](https://kubernetes.io/docs/concepts/security/secrets-good-practices/).
 
-For external automation, federation can exchange an assertion about a job for a short-lived target credential. The trust policy must constrain the expected issuer, audience, and subject, including the intended repository or environment where supported. A broad trust policy may let an unintended workload obtain perfectly valid credentials. GitHub's OIDC documentation describes this exchange and the role of provider trust conditions. [GitHub OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
+## Temporary access depends on a sound trust policy
 
-Where federation is unavailable, use a managed static credential with a named owner, narrow permissions, monitored use, and a tested replacement procedure. Calling an integration “legacy” should explain a constraint, not remove the obligation to contain its authority.
+Where supported, workload identity can reduce reliance on manually distributed persistent credentials. AWS recommends temporary credentials through IAM roles for workloads. The role still needs permissions appropriate to the job. [AWS IAM guidance](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
-## Treat the build system as a privileged environment
+External automation may be able to exchange an assertion about its identity for temporary target access. The important boundary sits in the trust policy. It needs to constrain the issuer, audience, and subject, including the intended repository or environment where supported. Otherwise, an unintended job may obtain a valid credential through an overly broad trust relationship. [GitHub OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
 
-Build and deployment jobs often run code maintained outside the organisation. Separate jobs that process untrusted contributions from jobs that can obtain production access. Give production authority only to the smallest necessary stage, after the required reviews, and restrict who can change that stage.
+Some suppliers will continue to require static keys. That limitation makes ownership, narrow permissions, monitoring, and tested replacement more important. A legacy designation explains why a preferred pattern is unavailable. It does not explain how the remaining authority is controlled.
 
-Review dependencies and pin approved action revisions where supported. Pinning improves change control; it does not establish that the selected revision is safe. Isolate runners across trust boundaries and decide what outbound connections privileged jobs actually require. These are proposed design controls for reducing the opportunity to steal or misuse runtime credentials.
+## Privileged jobs need a deliberate execution boundary
 
-The `tj-actions/changed-files` incident shows why this boundary matters: code running inside a workflow extracted secrets from runner memory. The architectural inference is that safe storage does not make arbitrary code safe to execute beside retrieved credentials. [GitHub advisory](https://github.com/advisories/GHSA-mrrh-fwg8-r2c3).
+A build process may execute code maintained outside the organization. Giving that execution production authority creates a dependency on the behavior of everything running beside the credential.
 
-## Design failure and recovery together
+Processing untrusted contributions separately from privileged deployment stages reduces that exposure path. The boundary also depends on who can modify the privileged workflow and whether the required approvals apply before access is issued. Reviewing an application change is insufficient if another route allows the deployment definition to be altered without equivalent control.
 
-Specify behaviour when the identity provider or secret manager is unavailable. Can the workload continue briefly with an already-issued credential? What happens at expiry? Which operations fail closed, and which business functions need a documented degraded mode? Avoid a permanent emergency key that silently becomes the normal dependency.
+Pinning an approved action revision supports change control, but does not establish that the chosen revision is safe. Dependency review, runner isolation, and restrictions on unnecessary outbound connections address other parts of the execution risk.
 
-Rotation also needs a consumer design. Some applications reload a secret automatically; others need a restart or new connection pool. If two credentials can overlap, define the overlap window and verify that the old one stops working. If they cannot, rehearse the coordinated change and its availability impact.
+The `tj-actions/changed-files` compromise demonstrated extraction of secrets from runner memory. The architectural implication is that secure storage cannot make arbitrary code safe to execute beside credentials after retrieval. [GitHub advisory](https://github.com/advisories/GHSA-mrrh-fwg8-r2c3).
 
-Short-lived credentials reduce the reuse window, but a compromised workload may keep obtaining new ones. Containment must include stopping issuance or disabling the workload's trust, with provider-specific treatment of sessions already issued. Design and test both paths.
+## Recovery is part of the architecture
 
-## The architecture review should end with evidence
+An issuer outage raises questions that normal operation can hide. A workload may continue briefly with access already issued, then fail when that access expires. The design needs to account for that transition and any business function that requires a documented degraded mode.
 
-Request a per-workload access map, a negative test showing disallowed access is rejected, and a recovery exercise showing that an exposed identity can be contained. Include logging coverage and the emergency access procedure. A diagram becomes useful assurance when the deployed system behaves as the diagram claims.
+Rotation creates a similar dependency on consumer behavior. Some applications reload a secret automatically. Others require a restart or a new connection pool. Where credentials can overlap, the transition needs a defined end and evidence that the old access fails. Where overlap is impossible, a coordinated cutover needs to be rehearsed.
+
+Temporary credentials also leave a distinction between stopping existing access and preventing new issuance. A compromised workload may keep obtaining fresh credentials until its trust or execution is disabled. Provider behavior determines what happens to sessions already issued.
+
+A convincing review therefore needs more than a diagram. It needs evidence that intended access works, unintended access is rejected, and a compromised identity can be contained without leaving an unexplained path back in.
+
+## Authoritative records connect the control systems
+
+The service catalog or CMDB owns the service context and its accountable owner. The secret manager owns credential material and issuance. An incident system owns response decisions. Stable identifiers connect these records without copying secret values into a ticket or inventory. The architecture depends on maintained relationships and usable interfaces rather than a particular product.
+
+The design also needs a credential version relationship and a record of consumer behavior. A detected value may belong to an earlier version, while a consumer may still hold an old connection. Resolving both prevents an automated response from rotating unrelated current access or declaring containment before the target rejects the exposed authority. Validation must use approved targets and treat unavailable evidence as inconclusive.
