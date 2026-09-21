@@ -1,58 +1,110 @@
-export const articles = [
+export const foundationArticles = [
   {
     slug: 'business-risk',
     topic: 'Business',
-    title: 'Why secret exposure is a business problem',
+    title: 'Why secret exposure matters to the business',
     description:
-      'Connect a leaked credential to operational disruption, customer harm, and decisions leaders can make.',
+      'The business consequence depends on what a credential permits and how safely that access can be stopped.',
   },
   {
     slug: 'action-plan',
+    updated: '21 September 2026',
     topic: 'Action',
-    title: 'What to do, who owns it, and where to start',
+    title: 'Where to start and who needs to own it',
     description:
-      'A practical 5W1H plan that turns concern into accountable work.',
+      'A defined service connects the purpose, scope, ownership, timing, and practical steps needed to reduce exposure.',
   },
   {
     slug: 'security-architecture',
+    updated: '21 September 2026',
     topic: 'Architecture',
-    title: 'Design for the moment a credential escapes',
+    title: 'Designing for the moment a credential escapes',
     description:
-      'Understand trust boundaries, runtime access, and the failure modes a vault cannot solve.',
+      'Storage, execution boundaries, permissions, and recovery determine what happens after a credential escapes.',
   },
   {
     slug: 'implementation',
+    updated: '21 September 2026',
     topic: 'Implementation',
-    title: 'Make good practices work in real systems',
+    title: 'Why good practices become difficult to implement',
     description:
-      'Handle legacy applications, noisy scans, fragile rotation, and delivery pressure.',
+      'Application behavior, supplier constraints, and delivery pressure determine whether good practices can be sustained.',
   },
   {
     slug: 'incident-response',
+    updated: '21 September 2026',
     topic: 'Response',
-    title: 'An exposed secret needs an access decision',
+    title: 'Responding when a secret is exposed',
     description:
-      'Contain access, recover safely, and investigate beyond the original alert.',
+      'Containment needs to stop usable access while investigation and recovery account for the affected service.',
   },
   {
     slug: 'governance',
+    updated: '21 September 2026',
     topic: 'Governance',
-    title: 'Give GRC visibility into risk, not just activity',
+    title: 'Giving GRC a clear view of credential risk',
     description:
-      'Govern ownership, exceptions, coverage, and evidence that controls actually work.',
+      'Ownership, coverage, exceptions, and evidence make reporting useful for risk decisions.',
   },
   {
     slug: 'what-good-looks-like',
+    updated: '21 September 2026',
     topic: 'Assurance',
-    title: 'What good looks like—and how to prove it',
+    title: 'Recognizing good control through evidence',
     description:
-      'Assess capabilities separately and test the outcomes that matter.',
+      'Effective access boundaries and tested recovery provide stronger assurance than a clean alert queue.',
   },
   {
     slug: 'path-forward',
+    updated: '21 September 2026',
     topic: 'Direction',
-    title: 'Move towards fewer persistent secrets',
+    title: 'Moving towards fewer persistent credentials',
     description:
-      'A phased roadmap to bounded access, workload identity, and durable improvement.',
+      'A phased approach connects immediate containment to supported identity patterns and the retirement of old access.',
   },
 ] as const;
+
+export const technicalArticles = [
+  {
+    slug: 'attacker-access-paths',
+    updated: '21 September 2026',
+    topic: 'Threats',
+    title: 'How exposed credentials become usable access',
+    description:
+      'Exposure paths, attacker use, and target authority explain what detection must connect to.',
+  },
+  {
+    slug: 'scanner-capabilities',
+    updated: '21 September 2026',
+    topic: 'Detection',
+    title: 'What secret scanners detect and where coverage stops',
+    description:
+      'Detection methods, validation, and enforcement placement need separate evidence.',
+  },
+  {
+    slug: 'choosing-a-scanner',
+    updated: '21 September 2026',
+    topic: 'Tool selection',
+    title: 'Choosing a scanner against actual requirements',
+    description:
+      'Coverage, operating responsibility, and integration needs provide a practical basis for selection.',
+  },
+  {
+    slug: 'pipeline-lifecycle',
+    updated: '21 September 2026',
+    topic: 'Integration',
+    title: 'Connecting detection to a working response',
+    description:
+      'Intake records and approved workflows connect a finding to containment and application recovery.',
+  },
+  {
+    slug: 'workload-identity-lab',
+    updated: '21 September 2026',
+    topic: 'Identity',
+    title: 'Replacing persistent credentials with workload identity',
+    description:
+      'Legacy applications, dynamic credentials, and attested identities need different recovery paths.',
+  },
+] as const;
+
+export const articles = [...foundationArticles, ...technicalArticles] as const;
