@@ -1,49 +1,63 @@
-## Good is a set of demonstrated capabilities
+## Good control can be demonstrated at service level
 
-A well-controlled organisation can explain where important credentials come from, which workloads use them, what authority they carry, and how that authority can be stopped. It also knows where that explanation is incomplete.
+A service with no open scanning alerts may still have an unknown credential owner or an untested recovery procedure. A clean queue therefore provides only part of the evidence needed to judge whether exposure is under control.
 
-A clean scan is useful evidence about a defined scan. It is not evidence that every credential is safe, that every exposure surface is covered, or that a response will succeed. Assess those capabilities separately.
+A stronger assessment can explain where important credentials come from, which workloads use them, what authority they carry, and how that authority can be stopped. It can also identify where those explanations remain incomplete.
 
-## Ownership and inventory are dependable
+This shifts attention from the appearance of control to the behavior of the service. The question becomes whether the claimed protection holds when a credential is actually replaced, access is challenged, or an operational dependency fails.
 
-For each critical service, credential metadata resolves to an accountable owner and an operational escalation route. The inventory is updated when an integration is created, changed, or retired. It contains no raw credential values and has its own access controls.
+## Ownership should be reachable beyond the inventory
 
-Test this by selecting a service from the business inventory, not only from the scanner's onboarded list. Trace its build, runtime, and vendor identities. Unmapped credentials and unknown owners should become findings with follow-up, not exclusions introduced to improve the result.
+For a critical service, credential metadata should resolve to an accountable owner and an operational contact who can be reached. The inventory needs to change when integrations are created, altered, or retired. Its purpose is to describe access, not store additional copies of secret values.
 
-## Access is bounded and separation is real
+Selecting a service from the business inventory tests a different boundary from selecting one already onboarded to a scanner. Its build, runtime, and supplier identities may reveal credentials absent from the security tool's records.
 
-A workload has only the authority needed for its purpose. Production and non-production identities are separated. Shared credentials are being removed or have a documented constraint and containment plan. Time limits reduce the duration of access where supported.
+Those gaps need follow up work. Excluding an unmapped credential from the assessment would make the result look more complete while leaving the service dependency unchanged.
 
-Evidence includes a deployed policy review and an authorised negative test: an identity intended for one service cannot access another. Verify the effective permissions, including inherited roles and trust relationships. Reading the intended policy is less persuasive if another policy grants broader access.
+## The access boundary needs evidence of denial
 
-## Prevention and detection have known boundaries
+An identity should have authority appropriate to its workload, with production access separated from development. Shared credentials need either removal or a documented constraint and containment plan.
 
-New exposure is blocked where the chosen control supports it. Bypasses are visible and reviewed. Detection covers an agreed set of repositories and other surfaces, and failures to collect or scan are distinguishable from successful clean results.
+Reviewing the intended policy is useful, but effective access may also come from inherited roles or other trust relationships. An authorized negative test adds evidence by showing that an identity intended for one service cannot access another.
 
-Use synthetic fixtures representing the expected formats and file paths. Include negative examples to observe noise. A missing fixture should fail the evaluation, while an unsupported surface should appear as a coverage gap. Do not turn a small successful test into a claim that all unknown formats will be detected.
+The test needs to cover a relevant boundary. Denial of an operation the workload never needed to attempt says less than denial of access to a neighboring production resource. Scope and test conditions determine what conclusion the result supports.
 
-## Response works under service conditions
+## Detection coverage includes knowing what was not checked
 
-The operational team can invalidate exposed access, replace it safely, and confirm the old access no longer works. The procedure accounts for scheduled jobs, cached credentials, active sessions, and the possibility of continued issuance. Recovery has a named owner.
+Preventive controls should block supported exposure patterns, with bypasses visible and reviewed. Detection should cover agreed surfaces, and collection or scanning failures should remain distinguishable from successful clean results.
 
-An exercise should include a realistic obstacle: the primary contact is unavailable, the provider console is inaccessible, or a consumer does not reload the replacement. Use isolated resources and agreed safety limits. The result should identify an operational improvement, not merely demonstrate that participants can read a runbook.
+Synthetic fixtures can represent expected formats and paths, while nonsecret examples help reveal noise. A missed expected fixture indicates a failure to investigate. An unsupported surface indicates a coverage gap. These are different findings and need different corrective work.
 
-## Governance produces decisions and follow-through
+A small successful evaluation cannot establish that every unknown format will be detected. Keeping the test boundary attached to the result prevents a useful check from becoming an unsupported claim of complete coverage.
 
-Leaders see unresolved critical exposures, overdue exceptions, coverage gaps, and recurring causes. They can trace headline measures to evidence and understand the denominator. Decisions result in funded work or explicit acceptance by the right owner.
+## Recovery needs to work with real dependencies
 
-A useful test is to choose one repeated exposure route and follow it across several reporting periods. If the same cause persists without a decision, the reporting process may be functioning while governance is not producing the required change.
+An operational exercise should demonstrate that replacement access works, the original access is ineffective, and continued issuance through a compromised identity can be stopped where relevant. Scheduled jobs, caches, and active sessions need consideration alongside the main application.
 
-## Use a capability profile without averaging away gaps
+A realistic obstacle can reveal where the procedure depends on favorable conditions (e.g. the primary contact is unavailable or a consumer does not reload its configuration). Isolated resources and agreed safety limits allow that dependency to be tested without creating a production incident.
 
-For each dimension—ownership, access design, prevention, detection, response, and governance—record one of four evidence states: **unknown**, **defined**, **operating**, or **demonstrated**. Unknown means evidence is missing. Defined means the procedure and owner exist. Operating means recent records show it is used. Demonstrated means a relevant exercise or independent check supports the claimed outcome.
+The exercise is useful when it produces evidence and corrective work. A completed meeting or a runbook read aloud does not establish that the service can recover.
 
-This is a proposed assessment aid for this series, not an industry maturity standard. Record the scope and date beside each judgement. Do not average the dimensions into a single score: excellent inventory does not compensate for an inability to revoke production access.
+## Governance should change what remains unresolved
 
-An illustrative service might have demonstrated ownership and operating detection but only a defined recovery procedure. Its next action is to test recovery and address the failures, not to buy another scanner to raise an aggregate score.
+Leaders need to see critical exposures, overdue exceptions, coverage gaps, and recurring causes. Headline measures should be traceable to evidence and retain their scope and denominator.
 
-## Accept evidence with an expiry
+Following one repeated exposure route across reporting periods can show whether that visibility leads anywhere. If the same cause persists without an accountable decision, reporting may be operating while the risk remains unchanged.
 
-A successful exercise proves something about the configuration and dependencies tested at that time. Reassess after material changes to identity, infrastructure, suppliers, or the application. Set periodic reviews based on criticality and change frequency.
+A funding decision, supplier escalation, service redesign, or explicit risk acceptance provides a clearer outcome. The record should show who owns the decision and what would require it to be reconsidered.
 
-Good does not mean exposure becomes impossible. It means the organisation can show that avoidable routes are reduced, remaining authority is bounded, and response works—and can identify where those claims stop being supported.
+## A capability profile keeps different weaknesses visible
+
+Ownership, access design, prevention, detection, response, and governance can be assessed separately using four evidence states. Unknown means evidence is missing. Defined means the owner and procedure exist. Operating means recent records show the procedure is used. Demonstrated means a relevant exercise or independent check supports the claimed outcome.
+
+This is a proposed assessment aid, not an industry maturity standard. Scope and date belong beside each judgment. Averaging the dimensions would conceal important differences because strong inventory cannot compensate for an inability to revoke production access.
+
+An illustrative service with demonstrated ownership but only a written recovery procedure has a specific next step. Recovery needs to be exercised and any failures addressed. Improving an unrelated capability would not resolve that gap.
+
+Evidence also has a period of relevance. Changes to identity, infrastructure, suppliers, or the application can weaken an earlier conclusion. Reassessment after material change, supported by periodic reviews appropriate to criticality, keeps the profile connected to the service as it operates now.
+
+## One trace should connect intake to effective containment
+
+A useful demonstration begins with approved intake and follows the same service identity through provisioning, consumer access, detection, owner assignment, and recovery. The evidence should show which version was exposed, why the action was permitted, and what the target accepted after execution.
+
+For a database credential, rejection of a fresh login and termination of an existing session are separate observations. For a workload identity, stopping new issuance and denying an already issued identity are also separate observations. Good control makes those distinctions visible and leaves the case open when the required outcome remains unverified.

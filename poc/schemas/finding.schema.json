@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FindingEvent",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "source",
+    "detected_at",
+    "locator",
+    "detector_identity",
+    "detector_version"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "default": "1.0" },
+    "event_id": { "type": "string" },
+    "source": { "type": "string" },
+    "detected_at": { "type": "string", "format": "date-time" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "locator": { "type": "string" },
+    "fingerprint": { "type": "string" },
+    "candidate_ref": { "type": "string" },
+    "detector_identity": { "type": "string" },
+    "detector_version": { "type": "string" },
+    "claimed_service_hint": { "type": "string" }
+  }
+}

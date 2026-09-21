@@ -1,0 +1,101 @@
+name: Credential Lifecycle Laboratory regression checks
+
+on:
+  push:
+    paths:
+      - 'poc/**'
+      - '.github/workflows/poc-ci.yml'
+  pull_request:
+    paths:
+      - 'poc/**'
+      - '.github/workflows/poc-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  validate-lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+
+      - name: Validate Lab Doctor
+        run: |
+          cd poc
+          python3 scripts/doctor.py
+
+      - name: Build Lab Base Container
+        run: |
+          cd poc
+          docker build -f Dockerfile.base -t poc-lab-base:latest .
+
+      - name: Generate ephemeral test TLS material
+        run: |
+          cd poc
+          ./certs/generate_certs.sh
+
+      - name: Run isolated regression tests
+        run: |
+          cd poc
+          make unit-test
+
+      - name: Build Linux SPIFFE binaries
+        run: |
+          cd poc
+          make build-bins
+
+      - name: Install live acceptance runner dependencies
+        run: |
+          python3 -m pip install --disable-pip-version-check \
+            requests==2.32.3 psycopg2-binary==2.9.10 playwright==1.51.0
+          python3 -m playwright install --with-deps chromium
+
+      - name: Run full live core acceptance
+        run: |
+          cd poc
+          export HOST_UID="$(id -u)"
+          export HOST_GID="$(id -g)"
+          make bootstrap
+          make up
+          make test
+
+      - name: Verify Gitleaks Scanner Rules
+        run: |
+          cd poc
+          python3 scripts/generate_fixtures.py
+          # Positive fixture MUST find leaks (gitleaks returns exit code 1 when leaks are found).
+          # Exit 0 means NO leaks found (failure for positive fixture).
+          # Exit > 1 means scanner error / syntax error (failure for CI).
+          set +e
+          docker run --rm -v "$(pwd)":/poc poc-lab-base:latest gitleaks detect --config /poc/scanner/gitleaks.toml --source /poc/fixtures/positive_log.txt --no-git --redact
+          SCAN_EXIT=$?
+          set -e
+          if [ $SCAN_EXIT -eq 1 ]; then
+            echo "Positive fixture correctly detected leaks (exit code 1)."
+          else
+            echo "ERROR: Expected gitleaks exit code 1 (leaks found), but got $SCAN_EXIT"
+            exit 1
+          fi
+          # Negative fixture MUST be clean (exit 0)
+          docker run --rm -v "$(pwd)":/poc poc-lab-base:latest gitleaks detect --config /poc/scanner/gitleaks.toml --source /poc/fixtures/negative_log.txt --no-git --redact
+
+      - name: Remove live acceptance resources
+        if: always()
+        run: |
+          cd poc
+          if [ -f .env ]; then
+            docker compose -p poc -f docker-compose.yml down -v --remove-orphans
+          fi
