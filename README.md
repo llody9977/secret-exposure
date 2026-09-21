@@ -28,4 +28,4 @@ The lab demonstrates one controlled path with disposable credentials. It is not 
 
 ## Contributing
 
-Propose corrections with a primary source where applicable. Do not submit secrets, internal incident data, or confidential documents. Contributor writing guidance is in [EDITORIAL.md](EDITORIAL.md).
+Propose corrections with a primary source where applicable. Do not submit secrets, internal incident data, or confidential documents.
