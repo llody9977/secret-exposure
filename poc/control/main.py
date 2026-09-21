@@ -1202,7 +1202,7 @@ def gitlab_pipeline_detail(id: str):
 @app.post("/api/gitlab/pipelines/{id}/revoke-credential")
 @app.post("/api/gitlab/pipelines/{id}/reject")
 @app.post("/api/gitlab/pipelines/{id}/approve-revocation")
-def gitlab_reject_pipeline(id: str):
+def gitlab_reject_pipeline(id: str, request: Request):
     """Reject deployment: cancel manual deploy job in SAME pipeline; remediation/rotation is handled by SecOps outside the pipeline"""
     conn = get_connection()
     cur = conn.cursor()
@@ -1237,7 +1237,7 @@ def gitlab_reject_pipeline(id: str):
                 reason=f"Pipeline {id} deployment rejected at manual gate. Commit {pipe['commit_sha']} halted. Remediation/rotation delegated to SecOps outside pipeline.",
                 expected_revision=inc["revision"]
             )
-            dec_res = record_decision(incident_id, dec)
+            dec_res = record_decision(incident_id, dec, request)
             op_id = dec_res.get("operation", {}).get("id")
             if op_id:
                 try:
@@ -1283,7 +1283,7 @@ def gitlab_reject_pipeline(id: str):
 
 @app.post("/api/gitlab/pipelines/{id}/approve")
 @app.post("/api/gitlab/pipelines/{id}/approve-false-positive")
-def gitlab_approve_pipeline(id: str):
+def gitlab_approve_pipeline(id: str, request: Request):
     """Approve deployment: unblock and execute deploy-job in the SAME pipeline via GitLab Job Play API"""
     conn = get_connection()
     cur = conn.cursor()
@@ -1324,7 +1324,7 @@ def gitlab_approve_pipeline(id: str):
                 reason=dec_reason,
                 expected_revision=inc["revision"]
             )
-            dec_res = record_decision(incident_id, dec)
+            dec_res = record_decision(incident_id, dec, request)
             op_id = dec_res.get("operation", {}).get("id")
             if op_id:
                 try:
@@ -1374,7 +1374,7 @@ def gitlab_approve_pipeline(id: str):
 
 @app.post("/api/gitlab/pipelines/{id}/allow-unrotated")
 @app.post("/api/gitlab/pipelines/{id}/allow-without-rotation")
-def gitlab_allow_unrotated_pipeline(id: str):
+def gitlab_allow_unrotated_pipeline(id: str, request: Request):
     """Allow valid credential to proceed without rotation (low impact / emergency risk acceptance) in the SAME pipeline"""
     conn = get_connection()
     cur = conn.cursor()
@@ -1405,7 +1405,7 @@ def gitlab_allow_unrotated_pipeline(id: str):
                 reason=f"Pipeline {id} allowed without immediate secret rotation by SecOps (low impact / risk exception recorded).",
                 expected_revision=inc["revision"]
             )
-            dec_res = record_decision(incident_id, dec)
+            dec_res = record_decision(incident_id, dec, request)
             op_id = dec_res["operation"]["id"]
             orchestrator.execute_operation(op_id, execution_identity="gitlab_runner_secops")
 
@@ -1446,7 +1446,7 @@ def gitlab_allow_unrotated_pipeline(id: str):
     }
 
 @app.post("/api/gitlab/pipelines/{id}/rotate-and-deploy")
-def gitlab_rotate_and_deploy_pipeline(id: str):
+def gitlab_rotate_and_deploy_pipeline(id: str, request: Request):
     """Integrated rotation flow: Rotate credential in Vault, refresh service, and unblock deploy in the SAME pipeline"""
     conn = get_connection()
     cur = conn.cursor()
@@ -1479,7 +1479,7 @@ def gitlab_rotate_and_deploy_pipeline(id: str):
                 reason=f"Pipeline {id} auto-remediated via integrated rotation: Vault static credential rotated, app reloaded, and deployment unblocked in SAME pipeline.",
                 expected_revision=inc["revision"]
             )
-            dec_res = record_decision(incident_id, dec)
+            dec_res = record_decision(incident_id, dec, request)
             op_id = dec_res["operation"]["id"]
             exec_res = orchestrator.execute_operation(op_id, execution_identity="gitlab_runner_secops")
 

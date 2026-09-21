@@ -1,5 +1,6 @@
 """Negative authentication regressions; no external services required."""
 import base64
+import inspect
 import hashlib
 import hmac
 import json
@@ -135,6 +136,11 @@ class ApiBoundaryTests(unittest.TestCase):
     def test_invalid_token_overrides_identity_header(self):
         response = self.client.post('/api/intakes', headers={'Authorization':'Bearer forged', 'X-Actor-Id':'admin'}, json={})
         self.assertEqual(response.status_code, 401)
+
+    def test_pipeline_decision_handlers_receive_the_authenticated_request(self):
+        for handler in [self.main.gitlab_reject_pipeline, self.main.gitlab_approve_pipeline,
+                        self.main.gitlab_allow_unrotated_pipeline, self.main.gitlab_rotate_and_deploy_pipeline]:
+            self.assertIn('request', inspect.signature(handler).parameters)
 
 
 if __name__ == '__main__':
