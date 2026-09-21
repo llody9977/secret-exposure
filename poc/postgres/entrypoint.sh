@@ -32,8 +32,12 @@ if su - postgres -c "psql -tAc \"SELECT 1 FROM pg_database WHERE datname='appdb'
     echo "Lab database 'appdb' already present; skipping init.sql."
 elif [ -f "$INIT_SQL" ]; then
     echo "Executing $INIT_SQL..."
-    su - postgres -c "psql -f $INIT_SQL"
+    su - postgres -c "psql -v ON_ERROR_STOP=1 -v control_db_password='$CONTROL_DB_PASSWORD' -v vault_db_admin_password='$VAULT_DB_ADMIN_PASSWORD' -v legacy_db_initial_password='$LEGACY_DB_INITIAL_PASSWORD' -f $INIT_SQL"
 fi
+
+# Reconcile only service-account passwords on every start. The legacy account is
+# managed by Vault and must not be reset here.
+su - postgres -c "psql -d postgres -v ON_ERROR_STOP=1 -v control_db_password='$CONTROL_DB_PASSWORD' -v vault_db_admin_password='$VAULT_DB_ADMIN_PASSWORD' -f /poc/postgres/refresh_runtime_passwords.sql"
 
 # Apply any migrations present in /poc/postgres/migrations (idempotent)
 if [ -d "/poc/postgres/migrations" ]; then

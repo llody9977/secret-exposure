@@ -3,6 +3,10 @@ services:
     image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
     container_name: ${LAB_PREFIX:-lab}-postgres
     entrypoint: ["/poc/postgres/entrypoint.sh"]
+    environment:
+      - CONTROL_DB_PASSWORD=${CONTROL_DB_PASSWORD:?Run bootstrap --gen-env first}
+      - VAULT_DB_ADMIN_PASSWORD=${VAULT_DB_ADMIN_PASSWORD:?Run bootstrap --gen-env first}
+      - LEGACY_DB_INITIAL_PASSWORD=${LEGACY_DB_INITIAL_PASSWORD:?Run bootstrap --gen-env first}
     volumes:
       - ./postgres:/poc/postgres
       - pg-data:/var/lib/postgresql/17/main
@@ -82,8 +86,9 @@ services:
     working_dir: /poc/control
     environment:
       - SPIFFE_ADMIN_TOKEN=${SPIFFE_ADMIN_TOKEN:?Run bootstrap --gen-env first}
-      - DATABASE_URL=postgresql://control_user:control_pass@postgres:5432/controldb
-      - APP_DB_ADMIN_URL=postgresql://vault_dba:vault_dba_pass@postgres:5432/appdb
+      - DATABASE_URL=postgresql://control_user:${CONTROL_DB_PASSWORD:?Run bootstrap --gen-env first}@postgres:5432/controldb
+      - APP_DB_ADMIN_URL=postgresql://vault_dba:${VAULT_DB_ADMIN_PASSWORD:?Run bootstrap --gen-env first}@postgres:5432/appdb
+      - LAB_DEMO_ACCOUNT_PICKER_ENABLED=${LAB_DEMO_ACCOUNT_PICKER_ENABLED:-true}
       - VAULT_ADDR=https://vault:8200
       - VAULT_CACERT=/certs/ca.pem
       - SUPERVISOR_URL=http://supervisor:8080
@@ -255,7 +260,7 @@ services:
         puma['max_threads'] = 4
         sidekiq['max_concurrency'] = 5
         prometheus_monitoring['enable'] = false
-        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD:-ChangeMeLabRoot2026}'
+        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD:?Run bootstrap --gen-env first}'
     ports:
       - "127.0.0.1:8929:8929"
       - "127.0.0.1:2224:22"

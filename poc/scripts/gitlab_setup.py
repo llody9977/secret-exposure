@@ -44,7 +44,10 @@ def _root_password():
         for line in open(env_path):
             if line.startswith("GITLAB_ROOT_PASSWORD="):
                 return line.split("=", 1)[1].strip()
-    return os.getenv("GITLAB_ROOT_PASSWORD", "ChangeMeLabRoot2026")
+    password = os.getenv("GITLAB_ROOT_PASSWORD")
+    if not password:
+        raise RuntimeError("GITLAB_ROOT_PASSWORD is required; run bootstrap with --gen-env first")
+    return password
 
 
 def wait_for_gitlab(attempts=60, delay=10):

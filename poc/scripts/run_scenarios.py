@@ -10,6 +10,7 @@ import requests
 import subprocess
 import concurrent.futures
 import threading
+from urllib.parse import quote
 from datetime import datetime, timezone, timedelta
 
 POC_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,12 +27,15 @@ SPIFFE_CALLER_URL = os.getenv("SPIFFE_CALLER_URL", "http://spiffe-caller:8003" i
 SPIFFE_SERVICE_ADMIN_URL = os.getenv("SPIFFE_SERVICE_ADMIN_URL", "http://spiffe-service:8444" if IS_IN_CONTAINER else "http://127.0.0.1:8444")
 
 SUPERVISOR_SECRET = os.getenv("SUPERVISOR_SECRET")
+LOCAL_ENV = {}
 env_path = os.path.join(POC_DIR, ".env")
 if os.path.exists(env_path):
     with open(env_path) as f:
         for line in f:
-            if line.startswith("SUPERVISOR_SECRET=") and not SUPERVISOR_SECRET:
-                SUPERVISOR_SECRET = line.split("=", 1)[1].strip()
+            if "=" in line and not line.lstrip().startswith("#"):
+                key, value = line.strip().split("=", 1)
+                LOCAL_ENV[key] = value
+    SUPERVISOR_SECRET = SUPERVISOR_SECRET or LOCAL_ENV.get("SUPERVISOR_SECRET")
 
 # Tokens are obtained from the deployed authentication boundary, never locally signed.
 TOKEN_ALICE = "alice"
@@ -434,7 +438,7 @@ class ScenarioRunner:
             # Check metrics
             mets = requests.get(f"{CONTROL_URL}/api/metrics", headers=self.auth_headers(TOKEN_ADMIN), timeout=3).text
 
-            forbidden_patterns = ["password", "PRIVATE KEY", "root_token", "vault_dba_pass", "control_pass"]
+            forbidden_patterns = ["password", "PRIVATE KEY", "root_token"]
             leaks = []
             for pat in forbidden_patterns:
                 if f'"{pat}":' in svcs or f'"{pat}":' in incs or f'"{pat}":' in mets:
@@ -977,7 +981,12 @@ class ScenarioRunner:
             revoked_fp = None
             import psycopg2
             try:
-                db_url = os.getenv("CONTROL_DB_URL", "postgresql://control_user:control_pass@127.0.0.1:5432/controldb")
+                db_url = os.getenv("CONTROL_DB_URL") or LOCAL_ENV.get("CONTROL_DB_URL")
+                if not db_url:
+                    password = LOCAL_ENV.get("CONTROL_DB_PASSWORD")
+                    if not password:
+                        raise RuntimeError("CONTROL_DB_PASSWORD is required for A19")
+                    db_url = f"postgresql://control_user:{quote(password, safe='')}@127.0.0.1:5432/controldb"
                 conn = psycopg2.connect(db_url)
                 with conn.cursor() as cur:
                     cur.execute("SELECT hmac_fingerprint FROM credential_versions WHERE credential_id='cred-svc-legacy' AND status='revoked' ORDER BY created_at ASC LIMIT 1")

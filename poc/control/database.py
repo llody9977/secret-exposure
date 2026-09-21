@@ -5,9 +5,11 @@ from psycopg2.extras import RealDictCursor
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://control_user:control_pass@postgres:5432/controldb")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 def get_connection():
+    if not DATABASE_URL:
+        raise RuntimeError("DATABASE_URL is required")
     return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
 
 def init_db():

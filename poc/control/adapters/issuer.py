@@ -147,7 +147,9 @@ class VaultSecretIssuerAdapter(SecretIssuerAdapter):
             conn.close()
 
     def terminate_target_sessions(self, username: str) -> int:
-        app_db_url = os.getenv("APP_DB_ADMIN_URL", "postgresql://vault_dba:vault_dba_pass@postgres:5432/appdb")
+        app_db_url = os.getenv("APP_DB_ADMIN_URL")
+        if not app_db_url:
+            raise RuntimeError("APP_DB_ADMIN_URL is required")
         conn = psycopg2.connect(app_db_url)
         cur = conn.cursor()
         cur.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE usename = %s", (username,))

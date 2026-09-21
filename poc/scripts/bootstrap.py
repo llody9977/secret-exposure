@@ -22,6 +22,17 @@ os.makedirs(BOOTSTRAP_DIR, exist_ok=True)
 ENV_FILE = os.path.join(POC_DIR, ".env")
 
 
+def env_value(name):
+    """Read a generated deployment secret without exposing it in command output."""
+    if name in os.environ:
+        return os.environ[name]
+    if os.path.exists(ENV_FILE):
+        for line in Path(ENV_FILE).read_text().splitlines():
+            if line.startswith(name + "="):
+                return line.split("=", 1)[1]
+    raise RuntimeError(f"{name} is required; run bootstrap with --gen-env first")
+
+
 def ensure_env_file():
     """Generate poc/.env with per-deployment random credentials on first run.
 
@@ -33,6 +44,9 @@ def ensure_env_file():
     keys = {line.split("=", 1)[0] for line in existing.splitlines() if "=" in line}
     defaults = {
         "GITLAB_ROOT_PASSWORD": secrets.token_urlsafe(18),
+        "CONTROL_DB_PASSWORD": secrets.token_urlsafe(24),
+        "VAULT_DB_ADMIN_PASSWORD": secrets.token_urlsafe(24),
+        "LEGACY_DB_INITIAL_PASSWORD": secrets.token_urlsafe(24),
         "SUPERVISOR_SECRET": secrets.token_urlsafe(32),
         "HMAC_SECRET_KEY": secrets.token_urlsafe(32),
         "AUTH_SIGNING_KEY": secrets.token_urlsafe(32),
@@ -128,7 +142,7 @@ def wait_for_postgres(attempts=45):
     for _ in range(attempts):
         try:
             psycopg2.connect(host="127.0.0.1", port=5432, dbname="appdb",
-                             user="vault_dba", password="vault_dba_pass",
+                             user="vault_dba", password=env_value("VAULT_DB_ADMIN_PASSWORD"),
                              connect_timeout=2).close()
             return
         except Exception:
@@ -200,7 +214,7 @@ def configure_vault(root_token):
         "allowed_roles": ["legacy-app-role", "integrated-role"],
         "connection_url": "postgresql://{{username}}:{{password}}@postgres:5432/appdb?sslmode=disable",
         "username": "vault_dba",
-        "password": "vault_dba_pass"
+        "password": env_value("VAULT_DB_ADMIN_PASSWORD")
     }, headers=headers, verify=CA_CERT, timeout=5)
     db_config_resp.raise_for_status()
 
@@ -317,7 +331,7 @@ def register_spire_workloads():
             if "Token:" in line:
                 token = line.split("Token:")[-1].strip()
         if token:
-            print(f"Generated SPIRE join token: {token}", flush=True)
+            print("Generated SPIRE agent join token.", flush=True)
             token_path = os.path.join(POC_DIR, "spire", "agent-token.txt")
             with open(token_path, "w") as f:
                 f.write(token)

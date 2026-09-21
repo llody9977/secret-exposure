@@ -465,12 +465,10 @@
   <dialog id="auth-dialog" aria-labelledby="auth-title" style="border-radius:10px;padding:28px;max-width:420px">
     <form id="auth-form">
       <h2 id="auth-title">Sign in to the lab</h2>
-      <p>Use your generated local account credentials. Different accounts have different permissions.</p>
-      <label for="auth-username">Username</label><br>
-      <input id="auth-username" name="username" autocomplete="username" required><br><br>
-      <label for="auth-password">Password</label><br>
-      <input id="auth-password" name="password" type="password" autocomplete="current-password" required><br><br>
-      <button type="submit">Sign in</button>
+      <p>Choose a local demonstration role. The lab does not display or send a password, and the selected session stays in this browser until you close it.</p>
+      <label for="auth-account">Local account</label><br>
+      <select id="auth-account" name="principal_id" required></select><br><br>
+      <button type="submit">Continue</button>
       <p id="auth-error" role="alert"></p>
     </form>
   </dialog>
@@ -480,7 +478,27 @@
     let token = sessionStorage.getItem('lab-access-token') || '';
     window.labPrincipal = sessionStorage.getItem('lab-principal') || '';
     const dialog = document.getElementById('auth-dialog');
-    function showLogin() { if (!dialog.open) dialog.showModal(); }
+    let accountsLoaded = false;
+    async function loadAccounts() {
+      const select = document.getElementById('auth-account');
+      const response = await originalFetch('/api/auth/demo-accounts');
+      if (!response.ok) throw new Error('The local account picker is unavailable. Start the POC with its generated environment.');
+      const accounts = (await response.json()).accounts || [];
+      if (!accounts.length) throw new Error('No local demonstration accounts are available. Run the POC bootstrap first.');
+      select.replaceChildren(...accounts.map(account => {
+        const option = document.createElement('option');
+        option.value = account.principal_id;
+        option.textContent = `${account.principal_id} (${account.role})`;
+        return option;
+      }));
+      accountsLoaded = true;
+    }
+    async function showLogin() {
+      if (!dialog.open) dialog.showModal();
+      if (accountsLoaded) return;
+      try { await loadAccounts(); document.getElementById('auth-error').textContent = ''; }
+      catch (error) { document.getElementById('auth-error').textContent = error.message; }
+    }
     document.getElementById('session-user').textContent = window.labPrincipal || 'Signed out';
     document.getElementById('session-switch').onclick = () => {
       token = ''; window.labPrincipal = '';
@@ -504,13 +522,13 @@
     };
     document.getElementById('auth-form').onsubmit = async event => {
       event.preventDefault();
-      const response = await originalFetch('/api/auth/token', {method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({username:document.getElementById('auth-username').value, password:document.getElementById('auth-password').value})});
-      if (!response.ok) { document.getElementById('auth-error').textContent = 'Sign-in failed. Check your credentials.'; return; }
+      const response = await originalFetch('/api/auth/demo-login', {method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({principal_id:document.getElementById('auth-account').value})});
+      if (!response.ok) { document.getElementById('auth-error').textContent = 'Unable to start the selected local session.'; return; }
       const data = await response.json(); token = data.access_token; window.labPrincipal = data.principal_id;
       sessionStorage.setItem('lab-access-token', token); sessionStorage.setItem('lab-principal', data.principal_id);
       document.getElementById('session-user').textContent = data.principal_id + ' (' + data.role + ')';
-      document.getElementById('auth-password').value = ''; document.getElementById('auth-error').textContent = '';
+      document.getElementById('auth-error').textContent = '';
       dialog.close(); if (typeof refreshAll === 'function') refreshAll();
     };
     if (!token) showLogin();

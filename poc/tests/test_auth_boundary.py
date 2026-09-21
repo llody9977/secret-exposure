@@ -81,6 +81,23 @@ class AuthBoundaryTests(unittest.TestCase):
         with self.assertRaises(HTTPException):
             auth.create_access_token('unknown')
 
+    def test_demo_picker_is_disabled_without_explicit_local_mode(self):
+        with patch.object(auth, 'DEMO_ACCOUNT_PICKER_ENABLED', False):
+            with self.assertRaises(HTTPException) as ctx:
+                auth.local_demo_accounts()
+        self.assertEqual(ctx.exception.status_code, 404)
+
+    def test_demo_picker_only_issues_registered_bootstrap_account(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'users.json'
+            path.write_text(json.dumps({'alice': {}, 'secops_admin': {}}))
+            with patch.multiple(auth, AUTH_USERS_FILE=str(path), DEMO_ACCOUNT_PICKER_ENABLED=True):
+                accounts = auth.local_demo_accounts()
+                self.assertEqual([item['principal_id'] for item in accounts], ['secops_admin', 'alice'])
+                self.assertEqual(auth.verify_token(auth.login_as_local_demo('alice')).id, 'alice')
+                with self.assertRaises(HTTPException):
+                    auth.login_as_local_demo('admin')
+
 
 class ApiBoundaryTests(unittest.TestCase):
     def setUp(self):

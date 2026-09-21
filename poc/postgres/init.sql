@@ -1,9 +1,9 @@
 -- Create Control Database and User
-CREATE USER control_user WITH PASSWORD 'control_pass';
+CREATE USER control_user WITH PASSWORD :'control_db_password';
 CREATE DATABASE controldb OWNER control_user;
 
 -- Create App Database and Vault DBA User (scoped privileges, non-superuser per ASSESSMENT Finding #2)
-CREATE USER vault_dba WITH CREATEROLE PASSWORD 'vault_dba_pass';
+CREATE USER vault_dba WITH CREATEROLE PASSWORD :'vault_db_admin_password';
 GRANT pg_signal_backend TO vault_dba;
 CREATE DATABASE appdb OWNER vault_dba;
 
@@ -33,7 +33,7 @@ GRANT SELECT, INSERT, UPDATE ON legacy_records, integrated_records TO app_reader
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_reader;
 
 -- Create legacy_user managed by Vault static role
-CREATE USER legacy_user WITH PASSWORD 'INITIAL_LEGACY_PASS_2026';
+CREATE USER legacy_user WITH PASSWORD :'legacy_db_initial_password';
 GRANT legacy_user TO vault_dba WITH ADMIN OPTION;
 GRANT app_reader TO legacy_user;
 GRANT ALL PRIVILEGES ON legacy_records TO legacy_user;

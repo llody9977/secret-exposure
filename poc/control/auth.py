@@ -11,6 +11,8 @@ from fastapi import Request, HTTPException
 AUTH_SIGNING_KEY = os.getenv("AUTH_SIGNING_KEY", "")
 INTERNAL_SERVICE_TOKEN = os.getenv("INTERNAL_SERVICE_TOKEN", "")
 AUTH_USERS_FILE = os.getenv("AUTH_USERS_FILE", "/poc/.bootstrap/auth_users.json")
+DEMO_ACCOUNT_PICKER_ENABLED = os.getenv("LAB_DEMO_ACCOUNT_PICKER_ENABLED", "false").lower() == "true"
+DEMO_ACCOUNT_IDS = ("secops_admin", "owner_dave", "sec_officer", "alice", "sec_responder")
 
 class Principal:
     def __init__(self, principal_id: str, role: str, permissions: Set[str], groups: Optional[Set[str]] = None):
@@ -90,6 +92,33 @@ def login(principal_id: str, password: str) -> str:
             raise ValueError("wrong password")
     except (OSError, ValueError, KeyError, TypeError):
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    return create_access_token(principal_id)
+
+
+def local_demo_accounts() -> List[Dict[str, str]]:
+    """Return a bounded set of bootstrap accounts for the loopback POC picker.
+
+    This replaces password entry only in the explicitly enabled local lab mode.
+    It never returns or reads the plaintext credential cache.
+    """
+    if not DEMO_ACCOUNT_PICKER_ENABLED:
+        raise HTTPException(status_code=404, detail="Local account picker is disabled")
+    try:
+        with open(AUTH_USERS_FILE) as f:
+            provisioned = json.load(f)
+    except (OSError, ValueError, TypeError):
+        raise HTTPException(status_code=503, detail="Local accounts are not initialized")
+    accounts = []
+    for principal_id in DEMO_ACCOUNT_IDS:
+        principal = get_principal(principal_id)
+        if principal and principal_id in provisioned:
+            accounts.append({"principal_id": principal.id, "role": principal.role})
+    return accounts
+
+
+def login_as_local_demo(principal_id: str) -> str:
+    if principal_id not in {account["principal_id"] for account in local_demo_accounts()}:
+        raise HTTPException(status_code=401, detail="Invalid local demo account")
     return create_access_token(principal_id)
 
 

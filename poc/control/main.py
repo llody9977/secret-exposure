@@ -23,7 +23,8 @@ from database import get_connection, init_db
 from hmac_service import compute_fingerprint, verify_fingerprint
 from adapters.registry import LocalRegistryAdapter
 from adapters.validator import ValidatorAdapter
-from auth import authenticate_request, require_permission, login, get_principal, Principal
+from auth import (authenticate_request, require_permission, login, get_principal, Principal,
+                  local_demo_accounts, login_as_local_demo)
 import orchestrator
 import candidate_store
 
@@ -64,6 +65,23 @@ def issue_token(body: Dict[str, Any], request: Request):
     return {"access_token": token, "token_type": "bearer", "principal_id": principal.id, "role": principal.role}
 
 
+@app.get("/api/auth/demo-accounts")
+def list_demo_accounts():
+    return {"accounts": local_demo_accounts()}
+
+
+@app.post("/api/auth/demo-login")
+def issue_demo_token(body: Dict[str, Any], request: Request):
+    principal_id = str(body.get("principal_id") or "")
+    try:
+        token = login_as_local_demo(principal_id)
+    except HTTPException:
+        audit_auth_failure(request, "demo_login_rejected")
+        raise
+    principal = get_principal(principal_id)
+    return {"access_token": token, "token_type": "bearer", "principal_id": principal.id, "role": principal.role}
+
+
 def audit_auth_failure(request: Request, action: str):
     # Record no supplied token, password, or unverified identity.
     import logging
@@ -80,7 +98,7 @@ def audit_auth_failure(request: Request, action: str):
 @app.middleware("http")
 async def enforce_api_boundary(request: Request, call_next):
     path = request.url.path
-    if path.startswith("/api/") and path not in {"/api/health", "/api/auth/token"}:
+    if path.startswith("/api/") and path not in {"/api/health", "/api/auth/token", "/api/auth/demo-accounts", "/api/auth/demo-login"}:
         try:
             principal = authenticate_request(request, require_auth=True)
             request.state.principal = principal
