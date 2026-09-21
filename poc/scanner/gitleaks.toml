@@ -1,0 +1,22 @@
+title = "Credential Lifecycle Lab Gitleaks Rules"
+
+[[rules]]
+id = "lab-secret-token"
+description = "Synthetic Credential Lifecycle Lab Secret Token"
+regex = '''LAB_SEC_[A-Za-z0-9_]{16,40}'''
+secretGroup = 0
+keywords = ["LAB_SEC_"]
+
+[[rules]]
+id = "lab-legacy-connection-string"
+description = "Synthetic Lab PostgreSQL Connection String with Password"
+regex = '''postgresql://legacy_user:([A-Za-z0-9_]{16,40})@'''
+secretGroup = 1
+keywords = ["postgresql://legacy_user:"]
+
+[[rules]]
+id = "lab-issued-database-password"
+description = "Actual disposable lab database password in controlled exposure fixture"
+regex = '''lab_database_password\s*=\s*"([^"\r\n]{16,128})"'''
+secretGroup = 1
+keywords = ["lab_database_password"]
