@@ -12,7 +12,10 @@ AUTH_SIGNING_KEY = os.getenv("AUTH_SIGNING_KEY", "")
 INTERNAL_SERVICE_TOKEN = os.getenv("INTERNAL_SERVICE_TOKEN", "")
 AUTH_USERS_FILE = os.getenv("AUTH_USERS_FILE", "/poc/.bootstrap/auth_users.json")
 DEMO_ACCOUNT_PICKER_ENABLED = os.getenv("LAB_DEMO_ACCOUNT_PICKER_ENABLED", "false").lower() == "true"
-DEMO_ACCOUNT_IDS = ("secops_admin", "owner_dave", "sec_officer", "alice", "sec_responder")
+# The browser presents one representative per human workflow role. Scanner and
+# internal identities remain service-only; specialist approvers stay available
+# to the acceptance suite but do not add another choice to the POC UI.
+DEMO_ACCOUNT_IDS = ("secops_admin", "alice", "owner_dave", "sec_responder")
 
 class Principal:
     def __init__(self, principal_id: str, role: str, permissions: Set[str], groups: Optional[Set[str]] = None):
@@ -40,17 +43,12 @@ ROLE_PERMISSIONS: Dict[str, Set[str]] = {
 # Principal definitions with authentic role and group memberships
 PRINCIPALS: Dict[str, Dict[str, Any]] = {
     "secops_admin": {"role": "admin", "groups": {"all", "security_team"}},
-    "admin": {"role": "admin", "groups": {"all", "security_team"}},
     "owner_dave": {"role": "approver", "groups": {"orders_team", "cust_ops", "platform_team", "legacy_team", "hardware_team"}},
     "sec_officer": {"role": "approver", "groups": {"security_team", "sec_fallback", "hardware_team"}},
     "bob": {"role": "approver", "groups": {"audit_team"}},  # Member of audit_team only (not orders_team/platform_team)
     "alice": {"role": "requester", "groups": {"dev_team"}},
-    "developer_alice": {"role": "requester", "groups": {"dev_team"}},
-    "requester_alice": {"role": "requester", "groups": {"dev_team"}},
     "sec_responder": {"role": "operator", "groups": {"secops", "incident_response"}},
     "lead_responder": {"role": "operator", "groups": {"secops", "incident_response"}},
-    "secops_responder": {"role": "operator", "groups": {"secops", "incident_response"}},
-    "secops_workflow": {"role": "operator", "groups": {"secops", "incident_response"}},
     "gitleaks": {"role": "scanner", "groups": {"automated_scanners"}},
     "scanner_svc": {"role": "scanner", "groups": {"automated_scanners"}},
     "anomaly_monitor": {"role": "scanner", "groups": {"automated_scanners"}},

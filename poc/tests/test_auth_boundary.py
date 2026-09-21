@@ -91,10 +91,10 @@ class AuthBoundaryTests(unittest.TestCase):
     def test_demo_picker_only_issues_registered_bootstrap_account(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'users.json'
-            path.write_text(json.dumps({'alice': {}, 'secops_admin': {}}))
+            path.write_text(json.dumps({'alice': {}, 'secops_admin': {}, 'owner_dave': {}, 'sec_responder': {}, 'sec_officer': {}}))
             with patch.multiple(auth, AUTH_USERS_FILE=str(path), DEMO_ACCOUNT_PICKER_ENABLED=True):
                 accounts = auth.local_demo_accounts()
-                self.assertEqual([item['principal_id'] for item in accounts], ['secops_admin', 'alice'])
+                self.assertEqual([item['principal_id'] for item in accounts], ['secops_admin', 'alice', 'owner_dave', 'sec_responder'])
                 self.assertEqual(auth.verify_token(auth.login_as_local_demo('alice')).id, 'alice')
                 with self.assertRaises(HTTPException):
                     auth.login_as_local_demo('admin')

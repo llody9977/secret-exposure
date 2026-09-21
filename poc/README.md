@@ -66,7 +66,7 @@ make reset
 
 ## Local sign-in
 
-Bootstrap generates local accounts and unique passwords in the restricted `.bootstrap/auth_credentials.json` file. Open the UI and sign in with the account appropriate to the action. The acceptance runner reads that local file and exchanges credentials at `/api/auth/token`; it cannot mint or grant its own role. Keep this file private and out of evidence packages.
+The browser presents four local demonstration roles: administrator, requester, approver, and responder. Choose one from the picker. The browser receives a short-lived session token and never displays or sends a password. Bootstrap still creates restricted credentials for service identities and the automated acceptance runner; those values stay in `.bootstrap/auth_credentials.json`, outside evidence packages.
 
 ## Architecture & Security Boundaries
 

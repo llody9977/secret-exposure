@@ -1377,8 +1377,6 @@ class ScenarioRunner:
             from playwright.sync_api import sync_playwright
             target_dir = os.path.join(EVIDENCE_DIR, self.run_id)
             os.makedirs(target_dir, exist_ok=True)
-            with open(os.path.join(POC_DIR, ".bootstrap", "auth_credentials.json")) as handle:
-                credentials = json.load(handle)
 
             with sync_playwright() as browser_runtime:
                 browser = browser_runtime.chromium.launch(headless=True)
@@ -1395,6 +1393,13 @@ class ScenarioRunner:
                     page.keyboard.press("Meta+A" if sys.platform == "darwin" else "Control+A")
                     page.keyboard.type(value)
 
+                def keyboard_select(page, selector, value):
+                    if not tab_to(page, selector):
+                        raise RuntimeError(f"Keyboard could not reach {selector}")
+                    page.keyboard.type(value)
+                    if page.locator(selector).input_value() != value:
+                        raise RuntimeError(f"Keyboard could not select {value} in {selector}")
+
                 def keyboard_activate(page, selector):
                     if not tab_to(page, selector):
                         raise RuntimeError(f"Keyboard could not reach {selector}")
@@ -1403,21 +1408,16 @@ class ScenarioRunner:
                     page = browser.new_page(viewport={"width": width, "height": 900})
                     page.goto(CONTROL_URL, wait_until="domcontentloaded")
                     page.locator("#auth-dialog").wait_for(state="visible")
-                    if not page.locator("#auth-username").evaluate("el => el === document.activeElement"):
-                        raise RuntimeError("Login dialog does not place initial keyboard focus on username input")
-                    page.keyboard.type("secops_admin")
+                    page.locator("#auth-account option").first.wait_for(state="attached")
+                    if not page.locator("#auth-account").evaluate("el => el === document.activeElement"):
+                        raise RuntimeError("Login dialog does not place initial keyboard focus on local account picker")
+                    self.record_assertion("A25", f"Four human workflow roles are presented at {width}px",
+                        page.locator("#auth-account option").all_text_contents() == [
+                            "secops_admin (admin)", "alice (requester)", "owner_dave (approver)", "sec_responder (operator)"],
+                        {"viewport": width, "accounts": page.locator("#auth-account option").all_text_contents()})
                     page.keyboard.press("Tab")
-                    self.record_assertion("A25", f"Keyboard username to password order at {width}px",
-                        page.locator("#auth-password").evaluate("el => el === document.activeElement"), {"viewport": width})
-                    page.keyboard.type("deliberately-invalid-password")
-                    page.keyboard.press("Tab")
-                    page.keyboard.press("Enter")
-                    page.wait_for_function("document.querySelector('#auth-error').textContent.length > 0")
-                    self.record_assertion("A25", f"Actual failed sign-in visibly reported at {width}px",
-                        page.locator("#auth-error").is_visible(), {"viewport": width, "message": page.locator("#auth-error").inner_text()})
-
-                    password = credentials["secops_admin"]
-                    keyboard_fill(page, "#auth-password", password)
+                    self.record_assertion("A25", f"Keyboard account picker reaches continue action at {width}px",
+                        page.locator("#auth-form button[type='submit']").evaluate("el => el === document.activeElement"), {"viewport": width})
                     page.keyboard.press("Enter")
                     page.locator("#auth-dialog").wait_for(state="hidden")
                     page.keyboard.press("Tab")
@@ -1430,15 +1430,17 @@ class ScenarioRunner:
                     page.close()
 
                 # Complete full keyboard journey on desktop viewport (1440px):
-                # 1. Login as alice -> keyboard submit intake
+                # 1. Choose alice -> keyboard submit intake
                 # 2. Switch user to owner_dave -> keyboard review & peer-approve intake
                 # 3. Navigate incidents queue & evidence link via keyboard
                 j_page = browser.new_page(viewport={"width": 1440, "height": 900})
                 j_page.goto(CONTROL_URL, wait_until="domcontentloaded")
+                j_page.locator("#auth-dialog").wait_for(state="visible")
+                j_page.locator("#auth-account option").first.wait_for(state="attached")
 
                 # Sign in as alice
-                keyboard_fill(j_page, "#auth-username", "alice")
-                keyboard_fill(j_page, "#auth-password", credentials["alice"])
+                keyboard_select(j_page, "#auth-account", "alice")
+                j_page.keyboard.press("Tab")
                 j_page.keyboard.press("Enter")
                 j_page.locator("#auth-dialog").wait_for(state="hidden")
 
@@ -1465,8 +1467,8 @@ class ScenarioRunner:
                 # Switch user to owner_dave
                 keyboard_activate(j_page, "#session-switch")
                 j_page.locator("#auth-dialog").wait_for(state="visible")
-                keyboard_fill(j_page, "#auth-username", "owner_dave")
-                keyboard_fill(j_page, "#auth-password", credentials["owner_dave"])
+                keyboard_select(j_page, "#auth-account", "owner_dave")
+                j_page.keyboard.press("Tab")
                 j_page.keyboard.press("Enter")
                 j_page.locator("#auth-dialog").wait_for(state="hidden")
 

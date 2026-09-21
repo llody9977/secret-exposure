@@ -72,10 +72,14 @@ def ensure_env_file():
     users_path = Path(BOOTSTRAP_DIR) / "auth_users.json"
     credentials = json.loads(credentials_path.read_text()) if credentials_path.exists() else {}
     users = json.loads(users_path.read_text()) if users_path.exists() else {}
-    names = ["secops_admin", "admin", "owner_dave", "sec_officer", "bob", "alice",
-             "developer_alice", "requester_alice", "sec_responder", "lead_responder",
-             "secops_responder", "secops_workflow", "gitleaks", "scanner_svc", "anomaly_monitor"]
+    names = ["secops_admin", "owner_dave", "sec_officer", "bob", "alice", "sec_responder",
+             "lead_responder", "gitleaks", "scanner_svc", "anomaly_monitor"]
     changed = False
+    for name in set(credentials) | set(users):
+        if name not in names:
+            credentials.pop(name, None)
+            users.pop(name, None)
+            changed = True
     for name in names:
         if name not in credentials or name not in users:
             password = credentials.setdefault(name, secrets.token_urlsafe(24))
