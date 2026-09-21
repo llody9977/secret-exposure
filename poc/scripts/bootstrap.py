@@ -111,8 +111,8 @@ def ensure_env_file():
             with open(neg_f, "w") as f:
                 f.write("# Negative Scanner Fixture Log\n[2026-09-06T12:00:01Z] [INFO] Clean execution\n")
 
-def run(cmd, shell=True, check=True):
-    res = subprocess.run(cmd, shell=shell, capture_output=True, text=True)
+def run(cmd, check=True):
+    res = subprocess.run(cmd, capture_output=True, text=True)
     if check and res.returncode != 0:
         print(f"Command failed: {cmd}\nStderr: {res.stderr}\nStdout: {res.stdout}", file=sys.stderr, flush=True)
         raise RuntimeError(f"Command exited with {res.returncode}")
@@ -327,7 +327,8 @@ def register_spire_workloads():
     print("Configuring SPIRE Server and Agent workloads...", flush=True)
 
     # Generate token on server
-    token_cmd = f"docker compose -p {PROJECT_NAME} -f {COMPOSE_FILE} exec -T spire-server spire-server token generate -spiffeID spiffe://lab.local/agent/node1"
+    compose = ["docker", "compose", "-p", PROJECT_NAME, "-f", COMPOSE_FILE, "exec", "-T", "spire-server", "spire-server"]
+    token_cmd = [*compose, "token", "generate", "-spiffeID", "spiffe://lab.local/agent/node1"]
     res = run(token_cmd, check=False)
     token = None
     if res.returncode == 0:
@@ -339,14 +340,14 @@ def register_spire_workloads():
             token_path = os.path.join(POC_DIR, "spire", "agent-token.txt")
             with open(token_path, "w") as f:
                 f.write(token)
-            os.chmod(token_path, 0o644)
+            os.chmod(token_path, 0o600)
 
     # Register Caller with 10s TTL for fast renewal observation (Scenario A13)
-    c_cmd = f"docker compose -p {PROJECT_NAME} -f {COMPOSE_FILE} exec -T spire-server spire-server entry create -spiffeID spiffe://lab.local/workload/caller -parentID spiffe://lab.local/agent/node1 -selector unix:uid:1001 -x509SVIDTTL 10"
+    c_cmd = [*compose, "entry", "create", "-spiffeID", "spiffe://lab.local/workload/caller", "-parentID", "spiffe://lab.local/agent/node1", "-selector", "unix:uid:1001", "-x509SVIDTTL", "10"]
     run(c_cmd, check=False)
 
     # Register Protected Service
-    s_cmd = f"docker compose -p {PROJECT_NAME} -f {COMPOSE_FILE} exec -T spire-server spire-server entry create -spiffeID spiffe://lab.local/workload/protected-service -parentID spiffe://lab.local/agent/node1 -selector unix:uid:1002"
+    s_cmd = [*compose, "entry", "create", "-spiffeID", "spiffe://lab.local/workload/protected-service", "-parentID", "spiffe://lab.local/agent/node1", "-selector", "unix:uid:1002"]
     run(s_cmd, check=False)
 
     print("SPIRE registration entries configured.", flush=True)

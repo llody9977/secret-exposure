@@ -2,6 +2,16 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Marked } from 'marked';
 import { articles } from './catalog';
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export function getArticle(slug: string) {
   const entry = articles.find((a) => a.slug === slug);
   if (!entry) return null;
@@ -13,6 +23,9 @@ export function getArticle(slug: string) {
   const used = new Map<string, number>();
   const renderer = new Marked({
     renderer: {
+      html({ text }) {
+        return escapeHtml(text);
+      },
       heading({ tokens, depth, text }) {
         const base = text
           .toLowerCase()
