@@ -32,7 +32,7 @@ export default function RootLayout({
           <nav aria-label="Main navigation">
             <a href={path('/')}>Overview</a>
             <a href={path('/references/')}>References</a>
-            <a href="https://github.com/llody9977/secret_exposure">
+            <a href="https://github.com/llody9977/secret-exposure">
               GitHub <span aria-hidden="true">↗</span>
             </a>
           </nav>
