@@ -130,19 +130,13 @@ REQ042. Map demonstrated outcomes to NIST CSF 2.0 functions, with each relations
 
 REQ043. A minimal local white UI with blue accents must show intake, service details, consumer relationships, incident timeline, owner decision, containment/recovery distinction, and evidence. It must be responsive and keyboard usable. No simulated green status. Show real pending, failed, and unknown states. No extra dashboard library or elaborate design system is required.
 
-## Delivery phases
+## Implemented scope
 
-Phase 1 establishes Compose, bootstrap, schema, role checks, intake, provisioning, and the legacy path. Complete the legacy scenario and its failure tests before expanding.
+The core laboratory implements local Compose deployment, bootstrap, intake and approval, managed static and dynamic database credentials, SPIFFE/SPIRE workload identity, containment and recovery workflows, evidence export, clean-install verification, restart and reset checks, and keyboard-tested UI workflows.
 
-Phase 2 adds the integrated application with real dynamic issuance, renewal, scoped revocation, pool replacement, and session checks.
+A01–A26 define the required core evidence. A passing run supports only the recorded conditions, source state, and local environment.
 
-Phase 3 adds real SPIRE attestation, SVID renewal, authorization, and identity containment tests.
-
-Phase 4 completes the failure matrix, metrics, evidence export, clean installation instructions, and independent CI tests.
-
-Phase 5 supplies optional GitLab and iTop profiles. ServiceNow is implemented and tested only when suitable authorized access is available. Report each adapter independently.
-
-At each phase, record changed files, exact commands run, observed results, remaining limitations, and next dependencies. Do not rewrite completed phases merely to add another tool. The first four phases constitute a complete core release; optional adapter claims require their own evidence.
+GitLab runner execution, iTop, ServiceNow, and other external adapters are not core claims. Each remains unverified until an authorized environment completes its own declared acceptance evidence.
 
 ## Primary references
 
