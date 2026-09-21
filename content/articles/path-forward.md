@@ -34,18 +34,6 @@ After service health is verified, the old access needs to be invalidated and rem
 
 Where migration is blocked, a narrower static credential with better isolation and tested revocation can still reduce risk. Its exception should retain the constraint, residual authority, owner, and next decision date. Partial improvement is useful when its remaining limits are explicit.
 
-## The calendar should support readiness rather than replace it
-
-An illustrative 90 day sequence can organize the work, but service complexity, incident urgency, and delivery capacity should determine the actual pace. The milestones need evidence of readiness rather than a date alone.
-
-During the first 30 days, the focus could be critical services, ownership, known exposure, and one exercised revocation path. The result should include coverage gaps and response responsibilities that have been tested in practice.
-
-During days 31 to 60, a supported access pattern could be piloted while prevention of new exposure and operational obstacles are addressed. Successful replacement, denial of unintended access, and a supportable recovery procedure provide evidence for expansion.
-
-During days 61 to 90, the pattern could extend to the next services while replaced credentials are retired and recurring causes reviewed. A capability profile and prioritized backlog would show both progress and the dependencies still requiring a decision.
-
-These are proposed planning intervals, not universal targets. A failed recovery exercise may justify delaying expansion while urgent exposure elsewhere still requires immediate action.
-
 ## The new trust needs continuing ownership
 
 Federation concentrates important decisions in trust policies and workload security. Changes to repositories, deployment environments, issuer configuration, and target roles can alter who obtains access. Monitoring unexpected issuance and testing how to stop a compromised workload remain necessary.

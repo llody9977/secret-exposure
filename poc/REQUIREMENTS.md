@@ -116,11 +116,9 @@ The local registry is authoritative for service context and ownership. The contr
 
 REQ040. Persist UTC event timestamps and durations. Each evidence event includes scenario_id, run_id, incident_id, operation_id, actor, action, status, service_id, credential_version_id where relevant, source revision, component versions, and redacted result. Store detailed sensitive diagnostics separately with restricted access and retention. Redacted JSONL and a human-readable report must be exportable without secrets.
 
-REQ041. Measure intake completeness, owner resolution coverage, successful scans divided by expected scans, detection to assignment, detection to verified containment, rotation to healthy application, recurrence, and migration completion. Retain open cases, failures, unknown inventory, and inconclusive validation. Use medians and tail values only with sample sizes. Separate known exposure time from detection time. Small synthetic lab results are not production SLAs or scanner benchmark claims.
+REQ041. Measure intake completeness, owner resolution coverage, successful scans divided by expected scans, detection to assignment, detection to verified containment, and rotation to healthy application. Retain open cases, failures, unknown inventory, and inconclusive validation. Use medians and tail values only with sample sizes. Separate known exposure time from detection time. Small synthetic lab results are not production SLAs or scanner benchmark claims.
 
-REQ042. Map demonstrated outcomes to NIST CSF 2.0 functions, with each relationship labeled as an implementation interpretation. Keep detailed SP 800-53 mapping in documentation and verify each selected control's current wording before claiming alignment. SPIFFE is an identity specification, SPIRE an implementation, and ATT&CK a threat knowledge base. None is a substitute for proof of control effectiveness or regulatory compliance.
-
-REQ043. A minimal local white UI with blue accents must show intake, service details, consumer relationships, incident timeline, owner decision, containment/recovery distinction, and evidence. It must be responsive and keyboard usable. No simulated green status. Show real pending, failed, and unknown states. No extra dashboard library or elaborate design system is required.
+REQ042. The local UI shows intake, service details, consumer relationships, incident timeline, owner decision, containment and recovery states, and evidence. It is responsive and keyboard usable. It shows real pending, failed, and unknown states.
 
 ## Implemented scope
 
