@@ -12,8 +12,8 @@ def compute_fingerprint(raw_secret: str, canonical_version: str = "v1") -> str:
     if canonical_version != "v1":
         raise ValueError(f"Unsupported canonicalization version: {canonical_version}")
     clean_secret = canonicalize(raw_secret)
-    h = hmac.new(HMAC_SECRET_KEY, clean_secret.encode("utf-8"), hashlib.sha256)
-    return f"hmac_sha256:{h.hexdigest()}"
+    h = hmac.new(HMAC_SECRET_KEY, clean_secret.encode("utf-8"), hashlib.sha512)
+    return f"hmac_sha512:{h.hexdigest()}"
 
 def verify_fingerprint(raw_secret: str, expected_fingerprint: str, canonical_version: str = "v1") -> bool:
     calculated = compute_fingerprint(raw_secret, canonical_version)

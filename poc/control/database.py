@@ -72,7 +72,7 @@ def init_db():
         id VARCHAR(64) PRIMARY KEY,
         credential_id VARCHAR(64) NOT NULL,
         version_id VARCHAR(64) NOT NULL UNIQUE,
-        hmac_fingerprint VARCHAR(128) NOT NULL,
+        hmac_fingerprint VARCHAR(160) NOT NULL,
         canonical_version VARCHAR(32) NOT NULL DEFAULT 'v1',
         status VARCHAR(32) NOT NULL,
         metadata JSONB DEFAULT '{}'::jsonb,
@@ -186,6 +186,7 @@ def init_db():
     ALTER TABLE services ADD COLUMN IF NOT EXISTS gitlab_repo_url VARCHAR(256);
     ALTER TABLE gitlab_pipelines ADD COLUMN IF NOT EXISTS remediated_by_pipeline_id VARCHAR(64);
     ALTER TABLE gitlab_pipelines ADD COLUMN IF NOT EXISTS remediation_details JSONB;
+    ALTER TABLE credential_versions ALTER COLUMN hmac_fingerprint TYPE VARCHAR(160);
     """)
 
     cur.execute("UPDATE candidate_references SET candidate_val = '[removed during restricted-store migration]', expires_at = LEAST(expires_at, NOW()) WHERE candidate_val <> '[removed during restricted-store migration]'")
