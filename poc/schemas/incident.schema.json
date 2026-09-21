@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IncidentRecord",
+  "type": "object",
+  "required": [
+    "id",
+    "finding_id",
+    "correlation_status",
+    "triage_status",
+    "containment_status",
+    "recovery_status",
+    "investigation_status",
+    "case_status",
+    "revision"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "finding_id": { "type": "string" },
+    "service_id": { "type": ["string", "null"] },
+    "credential_version_id": { "type": ["string", "null"] },
+    "correlation_status": { "type": "string", "enum": ["matched", "unmatched", "ambiguous"] },
+    "triage_status": { "type": "string", "enum": ["pending", "decided"] },
+    "containment_status": { "type": "string", "enum": ["pending", "running", "verified", "partial", "failed", "not_applicable"] },
+    "recovery_status": { "type": "string", "enum": ["pending", "healthy", "degraded", "failed"] },
+    "investigation_status": { "type": "string", "enum": ["open", "complete_with_limitations"] },
+    "case_status": { "type": "string", "enum": ["open", "closed"] },
+    "assigned_owner": { "type": ["string", "null"] },
+    "revision": { "type": "integer" }
+  }
+}

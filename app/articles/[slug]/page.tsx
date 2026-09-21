@@ -46,12 +46,15 @@ export default async function Article({
         <p className="eyebrow">{a.topic}</p>
         <h1>{a.title}</h1>
         <p className="dek">{a.description}</p>
-        <p className="meta">{a.minutes} min read · Updated 5 September 2026</p>
+        <p className="meta">
+          {a.minutes} min read · Reviewed{' '}
+          {'updated' in a ? a.updated : '21 September 2026'}
+        </p>
       </header>
       <div className="article-layout">
         <aside className="contents">
           <details open>
-            <summary>In this article</summary>
+            <summary>Contents</summary>
             <nav aria-label="Article contents">
               <ol>
                 {a.headings.map((h) => (
@@ -73,7 +76,7 @@ export default async function Article({
             href={next ? path(`/articles/${next.slug}/`) : path('/')}
           >
             <span>{next ? 'Next' : 'Overview'}</span>
-            <strong>{next ? next.title : 'Explore the articles'} →</strong>
+            <strong>{next ? next.title : 'Return to the overview'} →</strong>
           </a>
         </div>
       </div>

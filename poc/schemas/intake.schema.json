@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IntakeRequest",
+  "type": "object",
+  "required": [
+    "service_name",
+    "service_id",
+    "owner_group",
+    "operational_contact",
+    "fallback_group",
+    "environment",
+    "classification",
+    "business_criticality",
+    "application_category",
+    "target_resource",
+    "requested_permissions",
+    "consumer_list",
+    "lifetime_policy",
+    "replacement_mode",
+    "expected_restart_behavior",
+    "recovery_procedure_id"
+  ],
+  "properties": {
+    "service_name": { "type": "string" },
+    "service_id": { "type": "string" },
+    "owner_group": { "type": "string" },
+    "operational_contact": { "type": "string" },
+    "fallback_group": { "type": "string" },
+    "environment": { "type": "string" },
+    "classification": { "type": "string" },
+    "business_criticality": { "type": "string", "enum": ["high", "medium", "low"] },
+    "application_category": { "type": "string", "enum": ["legacy", "integrated", "spiffe", "unmodifiable"] },
+    "target_resource": { "type": "string" },
+    "requested_permissions": { "type": "array", "items": { "type": "string" } },
+    "consumer_list": { "type": "array", "items": { "type": "string" } },
+    "lifetime_policy": { "type": "string" },
+    "replacement_mode": { "type": "string" },
+    "expected_restart_behavior": { "type": "string" },
+    "recovery_procedure_id": { "type": "string" },
+    "exception_status": { "type": "object" },
+    "idempotency_key": { "type": "string" }
+  }
+}

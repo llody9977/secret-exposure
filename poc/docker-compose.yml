@@ -1,0 +1,300 @@
+services:
+  postgres:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-postgres
+    entrypoint: ["/poc/postgres/entrypoint.sh"]
+    environment:
+      - CONTROL_DB_PASSWORD=${CONTROL_DB_PASSWORD:?Run bootstrap --gen-env first}
+      - VAULT_DB_ADMIN_PASSWORD=${VAULT_DB_ADMIN_PASSWORD:?Run bootstrap --gen-env first}
+      - LEGACY_DB_INITIAL_PASSWORD=${LEGACY_DB_INITIAL_PASSWORD:?Run bootstrap --gen-env first}
+    volumes:
+      - ./postgres:/poc/postgres
+      - pg-data:/var/lib/postgresql/17/main
+    networks:
+      control-net:
+        aliases:
+          - db.internal.corp
+          - db-primary.internal.corp
+      app-net:
+        aliases:
+          - db.internal.corp
+    restart: unless-stopped
+
+  vault:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-vault
+    command: ["vault", "server", "-config=/vault/vault.hcl"]
+    volumes:
+      - ./vault:/vault
+      - ./certs/vault.pem:/certs/vault.pem:ro
+      - ./certs/vault-key.pem:/certs/vault-key.pem:ro
+      - vault-data:/vault/file
+      - ./.vault-data/logs:/vault/logs
+    networks:
+      - control-net
+      - app-net
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+  spire-server:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-spire-server
+    command: ["spire-server", "run", "-config", "/spire/server.conf"]
+    volumes:
+      - ./spire:/spire
+      - spire-server-data:/run/spire/data
+      - spire-private-socket:/tmp/spire-server/private
+    networks:
+      - spire-net
+    restart: unless-stopped
+
+  identity-authority:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-identity-authority
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8445"]
+    working_dir: /poc/identity-authority
+    environment:
+      - IDENTITY_AUTHORITY_TOKEN=${IDENTITY_AUTHORITY_TOKEN:?Run bootstrap --gen-env first}
+    volumes:
+      - ./identity-authority:/poc/identity-authority:ro
+      - spire-private-socket:/tmp/spire-server/private
+    networks:
+      - control-net
+    restart: unless-stopped
+    depends_on:
+      - spire-server
+
+  spire-agent:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-spire-agent
+    entrypoint: ["/spire/entrypoint-agent.sh"]
+    volumes:
+      - ./spire:/spire
+      - spire-socket:/tmp/spire-agent/public
+      - spire-agent-data:/run/spire/agent-data
+    networks:
+      - spire-net
+    restart: unless-stopped
+    depends_on:
+      - spire-server
+
+  control-api:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-control-api
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    working_dir: /poc/control
+    environment:
+      - SPIFFE_ADMIN_TOKEN=${SPIFFE_ADMIN_TOKEN:?Run bootstrap --gen-env first}
+      - DATABASE_URL=postgresql://control_user:${CONTROL_DB_PASSWORD:?Run bootstrap --gen-env first}@postgres:5432/controldb
+      - APP_DB_ADMIN_URL=postgresql://vault_dba:${VAULT_DB_ADMIN_PASSWORD:?Run bootstrap --gen-env first}@postgres:5432/appdb
+      - LAB_DEMO_ACCOUNT_PICKER_ENABLED=${LAB_DEMO_ACCOUNT_PICKER_ENABLED:-true}
+      - VAULT_ADDR=https://vault:8200
+      - VAULT_CACERT=/certs/ca.pem
+      - SUPERVISOR_URL=http://supervisor:8080
+      - SUPERVISOR_SECRET=${SUPERVISOR_SECRET:?Run bootstrap --gen-env first}
+      - HMAC_SECRET_KEY=${HMAC_SECRET_KEY:?Run bootstrap --gen-env first}
+      - IDENTITY_AUTHORITY_TOKEN=${IDENTITY_AUTHORITY_TOKEN:?Run bootstrap --gen-env first}
+      - AUTH_SIGNING_KEY=${AUTH_SIGNING_KEY:?Run bootstrap --gen-env first}
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN:?Run bootstrap --gen-env first}
+      - INTEGRATED_ADMIN_TOKEN=${INTEGRATED_ADMIN_TOKEN:?Run bootstrap --gen-env first}
+      - AUTH_USERS_FILE=/poc/.bootstrap/auth_users.json
+      - SOURCE_REVISION=${SOURCE_REVISION:-git_dynamic}
+      - HOST_UID=${HOST_UID:-}
+      - HOST_GID=${HOST_GID:-}
+    volumes:
+      - ./control:/poc/control
+      - ./scripts:/poc/scripts
+      - ./certs/ca.pem:/certs/ca.pem:ro
+      - ./.bootstrap/auth_users.json:/poc/.bootstrap/auth_users.json:ro
+      - ./.bootstrap/control_approle.json:/poc/.bootstrap/control_approle.json:ro
+      - ./.bootstrap/gitlab_access.json:/poc/.bootstrap/gitlab_access.json:ro
+      - ./.bootstrap/legacy-creds:/poc/.bootstrap/legacy-creds
+      - candidate-data:/poc/.bootstrap/candidates
+      - ./fixtures:/poc/fixtures
+      - ./scanner:/poc/scanner:ro
+      - ./evidence:/poc/evidence
+      - ./docker-compose.yml:/poc/docker-compose.yml:ro
+    networks:
+      - control-net
+      - app-net
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - vault
+
+  supervisor:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-supervisor
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+    working_dir: /poc/supervisor
+    environment:
+      - LEGACY_CONTROL_TOKEN=${LEGACY_CONTROL_TOKEN:?Run bootstrap --gen-env first}
+      - SUPERVISOR_SECRET=${SUPERVISOR_SECRET:?Run bootstrap --gen-env first}
+    volumes:
+      - ./supervisor:/poc/supervisor
+    networks:
+      - control-net
+      - app-net
+    restart: unless-stopped
+
+  legacy-app:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-legacy-app
+    command: ["python3", "/poc/apps/legacy/main.py"]
+    environment:
+      - LEGACY_CONTROL_TOKEN=${LEGACY_CONTROL_TOKEN:?Run bootstrap --gen-env first}
+      - CONFIG_FILE=/secrets/db-creds.json
+      - APP_DB_HOST=postgres
+      - APP_DB_PORT=5432
+      - APP_DB_NAME=appdb
+    volumes:
+      - ./apps/legacy:/poc/apps/legacy
+      - ./.bootstrap/legacy-creds:/secrets
+    networks:
+      - app-net
+    restart: always
+    depends_on:
+      - postgres
+
+  integrated-app:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-integrated-app
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
+    working_dir: /poc/apps/integrated
+    environment:
+      - VAULT_ADDR=https://vault:8200
+      - VAULT_CACERT=/certs/ca.pem
+      - CONTROL_API_URL=http://control-api:8000
+      - APP_DB_HOST=postgres
+      - APP_DB_PORT=5432
+      - APP_DB_NAME=appdb
+      - DYNAMIC_ROLE_NAME=integrated-role
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN:?Run bootstrap --gen-env first}
+      - INTEGRATED_ADMIN_TOKEN=${INTEGRATED_ADMIN_TOKEN:?Run bootstrap --gen-env first}
+    volumes:
+      - ./apps/integrated:/poc/apps/integrated
+      - ./certs/ca.pem:/certs/ca.pem:ro
+      - ./.bootstrap/integrated_approle.json:/poc/.bootstrap/integrated_approle.json:ro
+    networks:
+      - app-net
+    restart: unless-stopped
+    depends_on:
+      - vault
+      - postgres
+
+  spiffe-service:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-spiffe-service
+    pid: "service:spire-agent"
+    user: "1002"
+    command: ["/poc/apps/spiffe/bin/spiffe-service"]
+    environment:
+      - SPIFFE_ADMIN_TOKEN=${SPIFFE_ADMIN_TOKEN:?Run bootstrap --gen-env first}
+    volumes:
+      - ./apps/spiffe:/poc/apps/spiffe
+      - spire-socket:/tmp/spire-agent/public
+    networks:
+      - spire-net
+      - control-net
+    restart: unless-stopped
+    depends_on:
+      - spire-agent
+
+  spiffe-caller:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-spiffe-caller
+    pid: "service:spire-agent"
+    user: "1001"
+    command: ["/poc/apps/spiffe/bin/spiffe-caller"]
+    volumes:
+      - ./apps/spiffe:/poc/apps/spiffe
+      - spire-socket:/tmp/spire-agent/public
+    networks:
+      - spire-net
+      - control-net
+    restart: unless-stopped
+    depends_on:
+      - spire-agent
+      - spiffe-service
+
+  lab-ingress:
+    image: ${POC_BASE_IMAGE:-poc-lab-base:latest}
+    container_name: ${LAB_PREFIX:-lab}-ingress
+    command: ["python", "/poc/ingress/main.py"]
+    volumes:
+      - ./ingress:/poc/ingress:ro
+    networks:
+      - access-net
+      - control-net
+      - app-net
+      - spire-net
+    ports:
+      - "127.0.0.1:${INGRESS_POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${INGRESS_VAULT_PORT:-8200}:8200"
+      - "127.0.0.1:${INGRESS_AUTHORITY_PORT:-8445}:8445"
+      - "127.0.0.1:${INGRESS_CONTROL_PORT:-8000}:8000"
+      - "127.0.0.1:${INGRESS_SUPERVISOR_PORT:-8080}:8080"
+      - "127.0.0.1:${INGRESS_LEGACY_PORT:-8001}:8001"
+      - "127.0.0.1:${INGRESS_INTEGRATED_PORT:-8002}:8002"
+      - "127.0.0.1:${INGRESS_SPIFFE_SERVICE_PORT:-8444}:8444"
+      - "127.0.0.1:${INGRESS_SPIFFE_CALLER_PORT:-8003}:8003"
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    read_only: true
+    restart: unless-stopped
+
+  gitlab:
+    profiles:
+      - gitlab
+    image: gitlab/gitlab-ce:17.5.1-ce.0
+    container_name: ${LAB_PREFIX:-lab}-gitlab
+    hostname: 'gitlab.local'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost:8929'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+        # Optimize memory usage for dev/lab environment
+        puma['worker_processes'] = 2
+        puma['min_threads'] = 1
+        puma['max_threads'] = 4
+        sidekiq['max_concurrency'] = 5
+        prometheus_monitoring['enable'] = false
+        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD:?Run bootstrap --gen-env first}'
+    ports:
+      - "127.0.0.1:8929:8929"
+      - "127.0.0.1:2224:22"
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
+    networks:
+      - control-net
+      - app-net
+      - access-net
+    restart: unless-stopped
+
+networks:
+  access-net:
+    driver: bridge
+  control-net:
+    driver: bridge
+    internal: true
+  app-net:
+    driver: bridge
+    internal: true
+  spire-net:
+    driver: bridge
+    internal: true
+
+volumes:
+  candidate-data:
+  pg-data:
+  vault-data:
+  spire-server-data:
+  spire-agent-data:
+  spire-socket:
+  spire-private-socket:
+  gitlab-config:
+  gitlab-logs:
+  gitlab-data:
